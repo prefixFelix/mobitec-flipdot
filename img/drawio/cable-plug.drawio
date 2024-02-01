@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net" modified="2024-01-31T18:47:07.641Z" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/116.0" etag="5CF0NPKUVWw5iM52CY_I" version="23.1.0" type="device">
+  <diagram name="Page-1" id="g-DCbeHwZXYy3C08vTt-">
+    <mxGraphModel dx="683" dy="370" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-1" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;strokeWidth=7;" vertex="1" parent="1">
+          <mxGeometry x="350" y="310" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-2" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Courier New;fillColor=#8ff0a4;" vertex="1" parent="1">
+          <mxGeometry x="410" y="340" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-3" value="4" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Courier New;fillColor=#f66151;" vertex="1" parent="1">
+          <mxGeometry x="410" y="400" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-4" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="380" y="370" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-5" value="&lt;font color=&quot;#ffffff&quot;&gt;3&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fillColor=#5e5c64;fontFamily=Courier New;" vertex="1" parent="1">
+          <mxGeometry x="440" y="370" width="20" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-12" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#ffffff;" vertex="1" parent="1">
+          <mxGeometry x="410" y="440" width="20" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-13" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#ffffff;rotation=90;" vertex="1" parent="1">
+          <mxGeometry x="343.75" y="376.25" width="20" height="7.5" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-14" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#ffffff;rotation=-225;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="364" y="330" width="20" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-15" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#ffffff;rotation=-135;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="453" y="327" width="20" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-16" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#ffffff;rotation=-115;fontStyle=4" vertex="1" parent="1">
+          <mxGeometry x="469" y="350" width="20" height="10" as="geometry" />
+        </mxCell>
+        <mxCell id="6iXfl7kXLkrP6u-nbJ6V-17" value="&lt;i&gt;&lt;font style=&quot;font-size: 9px;&quot; face=&quot;Verdana&quot;&gt;Cable plug (male)&lt;br&gt;&lt;/font&gt;&lt;/i&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="320" y="450" width="200" height="20" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
