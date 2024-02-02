@@ -61,11 +61,9 @@ func (d *Display) BufferText(text string) {
 
 func (d *Display) SendBuffer() error {
 	data := d.dataBuffer[0]
-	print(data)
 	for i := 1; i < len(d.dataBuffer); i++ {
 		data = append(data, d.dataBuffer[i]...)
 	}
-	print(data)
 	pkt := d.m.Packet(data)
 	return d.m.Send(pkt)
 }
