@@ -2,3 +2,4 @@ __pycache__/
 dev_*
 .idea/
 .venv/
+src/go/mobitec/example/main.go
