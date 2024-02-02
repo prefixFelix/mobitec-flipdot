@@ -4,6 +4,12 @@
 https://github.com/Nosen92/maskin-flipdot/blob/main/mobitec.py
 
 """
+"""
+
+--- Mobitec Fork ---
+https://github.com/Nosen92/maskin-flipdot/blob/main/mobitec.py
+
+"""
 
 
 from time import sleep  # Only used for dvd screensaver and examples
@@ -11,65 +17,6 @@ import designs
 import serial
 
 
-"""
-Special symbols:
-    text_5px = 0x72  # Large letters only
-    text_6px = 0x66
-    text_7px = 0x65
-    text_7px_bold = 0x64
-    text_9px = 0x75
-    text_9px_bold = 0x70
-    text_9px_bolder = 0x62
-    text_13px = 0x73
-    text_13px_bold = 0x69
-    text_13px_bolder = 0x61
-    text_13px_boldest = 0x79
-    numbers_14px = 0x00
-    text_15px = 0x71
-    text_16px = 0x68
-    text_16px_bold = 0x78
-    text_16px_bolder = 0x74
-    symbols = 0x67
-    bitmap = 0x77
-    
-    F61 = (0x61, 5)
-    F62 = (0x62, 5)
-    F63 = (0x63, 5)
-    F64 = (0x64, 5)
-    F65 = (0x65, 5)
-    F66 = (0x66, 5)
-    F67 = (0x67, 5)
-    F68 = (0x68, 5)
-    F69 = (0x69, 5)
-    F70 = (0x70, 5)
-    F71 = (0x71, 5)
-    F72 = (0x72, 5)
-    F73 = (0x73, 5)
-    F74 = (0x74, 5)
-    F75 = (0x75, 5)
-    F76 = (0x76, 5)
-    SMALL_F = (0x64, 5)
-    BITMAP = (0x77, 5)
-
-    # F<HEIGHT>_<Fat>/<Thin>
-
-    F13_F = (0x61, 13) # on 0x70 too
-    F9_F = (0x62, 9)
-    F19_F = (0x63, 19)
-    F7_F = (0x64, 7)
-    F7 = (0x65, 7)
-    F6 = (0x66, 7)
-    SYMBOL = (0x67, 16)
-    F16_T = (0x68, 16)
-    F13_T = (0x69, 13)
-    #F13_F = (0x70, 13)
-    F15_T = (0x71, 15)
-    F5 =(0x72, 5)
-    F13_TT = (0x73, 13)
-
-    # 74: Only one character... and only A seems to work
-    F13 = (0x75, 13) # same as F13_T but wider...
-"""
 
 class MobitecDisplay:
     """
@@ -90,14 +37,14 @@ class MobitecDisplay:
         "offset_y" (byte): Vertical offset of text.
     """
 
-    def __init__(self, port, fonts, address, width, height):
+    def __init__(self, port, address, width, height):
         """Makes a display object."""
         self.port = port
         self.address = address
         self.width = width
         self.height = height
-        self.fonts = fonts
-        self.current_font = fonts["7px"]
+
+        self.font = fonts["7px"]
         self.position = {
             "x": 0,
             "y": 0
@@ -237,45 +184,25 @@ class MobitecDisplay:
         """Adds text to the text buffer."""
         self.image_buffer.append(image)
 
-    def draw_pixel(self, x, y):
-        """Flips a single pixel on. Note: unable to turn pixels off."""
-        temp_pixelfont = self.current_font.name != "pixel_subcolumns"  # Check if another font is used
-        if temp_pixelfont:
-            original_font = self.current_font.name
-        self.set_font("pixel_subcolumns")
-        self.set_position(x, y)
-        self.print_text("!")  # Just top pixel
-        if temp_pixelfont:
-            self.set_font(original_font)
+    # def draw_pixel(self, x, y):
+    #     """Flips a single pixel on. Note: unable to turn pixels off."""
+    #     temp_pixelfont = self.current_font.name != "pixel_subcolumns"  # Check if another font is used
+    #     if temp_pixelfont:
+    #         original_font = self.current_font.name
+    #     self.set_font("pixel_subcolumns")
+    #     self.set_position(x, y)
+    #     self.print_text("!")  # Just top pixel
+    #     if temp_pixelfont:
+    #         self.set_font(original_font)
 
-    def dvd_screensaver(self, fps):
-        """One pixel bounces off the sides of the display indefinitely."""
-        down = True
-        right = True
-        x = 0
-        y = 0
-        self.set_font("pixel_subcolumns")
-        while True:
-            self.clear_display()
-            self.draw_pixel(x, y)
-            self.display()
-            sleep(1 / fps)
-            if right:
-                x = x + 1
-            else:
-                x = x - 1
-            if down:
-                y = y + 1
-            else:
-                y = y - 1
-            if x == self.width - 1:
-                right = False
-            if x == 0:
-                right = True
-            if y == self.height - 1:
-                down = False
-            if y == 0:
-                down = True
+    def display_text(self):
+        """Display text/symbols by utilising Mobitec predefined methods/fonts?."""
+
+    def display_bitmap(self):
+
+    def display_image(self):
+
+    def clear(self):
 
 
 class Font:
@@ -362,75 +289,16 @@ class Bitmap:
         return True
 
 
-def draw_line(matrix, x1, y1, x2, y2):
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
-    err = dx - dy
+# def png_to_bitmap(image_path):
+#     image = Image.open(image_path)
+#     image = image.convert("L")  # Greyscale
+#     image = image.resize((28, 13))
+#     width, height = image.size
+#     bm = Bitmap(width, height, 0, 0)  # Initialize bitmap
+#     for y in range(height):
+#         for x in range(width):
+#             brightness = image.getpixel((x, y))
+#             bm.bitmap[y][x] = brightness < 128
+#     return bm
 
-    while x1 != x2 or y1 != y2:
-        matrix[y1][x1] = 1
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x1 += sx
-        if e2 < dx:
-            err += dx
-            y1 += sy
-
-    matrix[y1][x1] = 1
-
-
-def png_to_bitmap(image_path):
-    image = Image.open(image_path)
-    image = image.convert("L")  # Greyscale
-    image = image.resize((28, 13))
-    width, height = image.size
-    bm = Bitmap(width, height, 0, 0)  # Initialize bitmap
-    for y in range(height):
-        for x in range(width):
-            brightness = image.getpixel((x, y))
-            bm.bitmap[y][x] = brightness < 128
-    return bm
-
-
-if __name__ == "__main__":
-    """Example usage."""
-
-    import serial
-    from PIL import Image
-    import datetime
-    import math
-
-    # port = "/dev/ttyS0" # RPi
-    port = "/dev/ttyUSB0"  # Jonas
-    # port = "COM4" # Kasper
-
-    fonts = {
-        # name, height, code
-        "7px": Font("7px", 7, 0x60),
-        "7px_wide": Font("7px_wide", 7, 0x62),
-        "12px": Font("12px", 12, 0x63),
-        "13px": Font("13px", 13, 0x64),
-        "13px_wide": Font("13px_wide", 13, 0x65),
-        "13px_wider": Font("13px_wider", 13, 0x69),
-        "16px_numbers": Font("16px_numbers", 16, 0x68),
-        "16px_numbers_wide": Font("16px_numbers_wide", 16, 0x6a),
-        "pixel_subcolumns": Font("pixel_subcolumns", 5, 0x77)
-    }
-    flipdot = MobitecDisplay(port, fonts, address=0x06, width=112, height=16)
-
-    flipdot.clear_display()
-    bm = Bitmap(28, 13, 2, 2)
-    bm.bitmap = designs.standard_m
-
-    flipdot.set_position(3, 0)
-    flipdot.set_font("13px_wide")
-    flipdot.print_text("Smörjkammaren")
-    flipdot.display()
-    input()
-    # Add bitmap example too
-
-    flipdot.dvd_screensaver(2)
 
