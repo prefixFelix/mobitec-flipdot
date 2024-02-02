@@ -28,6 +28,7 @@ var (
 	CHARMAP     = map[rune]byte{
 		'Ä': 0x5b, 'ä': 0x7b,
 		'Ö': 0x5c, 'ö': 0x7c,
+		'Ü': 0x5f, 'ü': 0x5e,
 	}
 )
 
