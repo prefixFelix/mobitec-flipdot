@@ -139,7 +139,13 @@ func (m *messenger) dataHeader(font byte, hOffset, vOffset int) []byte {
 
 // returns the packet header
 func (m *messenger) packetHeader() []byte {
-	return []byte{m.address, 0xa2, 0xd0, m.width, 0xd1, m.height}
+	data := []byte{m.address, 0xa2}
+	if !initialized {
+		data = append(data, 0xd0, m.width, 0xd1, m.height)
+		initialized = true
+	}
+
+	return data
 }
 
 // addBits takes a slice of bits (as ints) and adds them according

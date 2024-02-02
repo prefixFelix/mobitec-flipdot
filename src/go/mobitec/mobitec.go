@@ -5,6 +5,8 @@ import (
 	"github.com/prefixFelix/mobitec-flipdot/src/go/mobitec/matrix"
 )
 
+var initialized = false
+
 type Display struct {
 	m          messenger
 	font       fonts.Font
