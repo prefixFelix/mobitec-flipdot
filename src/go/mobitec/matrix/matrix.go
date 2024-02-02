@@ -16,13 +16,13 @@ type Matrix struct {
 	data [][]bool
 }
 
-// NewMatrix creates a new empty Matrix of the given size, initialized to False.
-func NewMatrix() *Matrix {
+// New creates a new empty Matrix of the given size, initialized to False.
+func New() *Matrix {
 	return &Matrix{newData(false)}
 }
 
-// NewFullMatrix creates a new empty Matrix of the given size, initialized to True.
-func NewFullMatrix() *Matrix {
+// NewFull creates a new empty Matrix of the given size, initialized to True.
+func NewFull() *Matrix {
 	return &Matrix{newData(true)}
 }
 
