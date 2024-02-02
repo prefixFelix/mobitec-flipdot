@@ -167,45 +167,6 @@ class MobitecDisplay:
         """Adds text to the text buffer."""
         self.image_buffer.append(image)
 
-    def draw_pixel(self, x, y):
-        """Flips a single pixel on. Note: unable to turn pixels off."""
-        temp_pixelfont = self.current_font.name != "pixel_subcolumns"  # Check if another font is used
-        if temp_pixelfont:
-            original_font = self.current_font.name
-        self.set_font("pixel_subcolumns")
-        self.set_position(x, y)
-        self.print_text("!")  # Just top pixel
-        if temp_pixelfont:
-            self.set_font(original_font)
-
-    def dvd_screensaver(self, fps):
-        """One pixel bounces off the sides of the display indefinitely."""
-        down = True
-        right = True
-        x = 0
-        y = 0
-        self.set_font("pixel_subcolumns")
-        while True:
-            self.clear_display()
-            self.draw_pixel(x, y)
-            self.display()
-            sleep(1/fps)
-            if right:
-                x = x + 1
-            else:
-                x = x - 1
-            if down:
-                y = y + 1
-            else:
-                y = y - 1
-            if x == self.width - 1:
-                right = False
-            if x == 0:
-                right = True
-            if y == self.height - 1:
-                down = False
-            if y == 0:
-                down = True
 
 class Font:
     """
@@ -285,25 +246,6 @@ class Bitmap:
                     return False
         return True
 
-def draw_line(matrix, x1, y1, x2, y2):
-    dx = abs(x2 - x1)
-    dy = abs(y2 - y1)
-    sx = 1 if x1 < x2 else -1
-    sy = 1 if y1 < y2 else -1
-    err = dx - dy
-
-    while x1 != x2 or y1 != y2:
-        matrix[y1][x1] = 1
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x1 += sx
-        if e2 < dx:
-            err += dx
-            y1 += sy
-
-    matrix[y1][x1] = 1
-
 def png_to_bitmap(image_path):
     image = Image.open(image_path)
     image = image.convert("L")  # Greyscale
@@ -329,6 +271,7 @@ if __name__ == "__main__":
 
     fonts = {
             # name, height, code
+            "6px": Font("5px", 5, 0x66),
             "7px": Font("7px", 7, 0x60),
             "7px_wide": Font("7px_wide", 7, 0x62),
             "12px": Font("12px", 12, 0x63),
@@ -346,6 +289,15 @@ if __name__ == "__main__":
     # bm.bitmap = designs.standard_m
 
     flipdot.set_position(0, 0)
-    flipdot.set_font("7px")
+    flipdot.set_font("6px")
+    flipdot.print_text("kek")
+    #
+    flipdot.set_position(0, 6)
+    flipdot.set_font("6px")
+    flipdot.print_text("kek")
+    flipdot.display()
+
+    flipdot.set_position(0, 12)
+    flipdot.set_font("6px")
     flipdot.print_text("kek")
     flipdot.display()

@@ -25,7 +25,7 @@
 ### Ports
 
 The board has a 10 and a 26 pin port.  
-The 10-pin port is used to connect the HMI to the controller board. The HMI is operated by the bus driver, who controls what the flipdot displays show. Data between the HMI and the controller board is transmitted via [RS-485](https://en.wikipedia.org/wiki/RS-485). Power is as well provide via the HMI. The original cable *KABELUTSTICK* with article number *CE311007.1* is used for the connection. The female 10 pin plug of the cable should be of type XY and can be found here. Please note that although the original cable has two different wires soldered to the two GND pins of the plug, only pin 3 is connected to GND on the other end of the plug.  Pin number 5 therefore has no useful functionality. The male connector at the other end of the cable is a proprietary one with unusual notches.
+The 10-pin port is used to connect the HMI to the controller board. The HMI is operated by the bus driver, who controls what the flipdot displays show. Data between the HMI and the controller board is transmitted via [RS-485](https://en.wikipedia.org/wiki/RS-485). Power is as well provide via the HMI. The original cable *KABELUTSTICK* with article number *CE311007.1* is used for the connection. The female 10 pin connector is of type JST-XH-9S1P with a pin spacing of one inch, which corresponds to the spacing of standard pin header connectors. Please note that although the original cable has two different wires soldered to the two GND pins of the plug, only pin 3 is connected to GND on the other end of the plug.  Pin number 5 therefore has no useful functionality. The male connector at the other end of the cable is a proprietary one with unusual notches.
 
 ![10pin](img/10pin.png)
 

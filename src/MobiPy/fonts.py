@@ -1,4 +1,28 @@
 """
+Text:
+        0x00 - 0x61:    13px_bold
+        0x62:           9px_bolder?
+        0x72:           5px
+Symbols:
+        0x67
+                0: Factory
+                1: Church
+                2: Soccer1
+                3: Soccer2
+                4: Soccer3
+                5: Horse1
+                6: Horse2
+                7: Horse3
+                8: Horse4
+                9: Horse5
+                A: K?
+                B: Swimmer
+                C: Stripes?
+                ...
+Bitmap:
+        0x77
+
+
 Special symbols:
     text_5px = 0x72  # Large letters only
     text_6px = 0x66
