@@ -1,8 +1,8 @@
 package mobitec
 
 import (
-	"github.com/prefixFelix/mobitec-flipdot/go/mobitec/fonts"
-	"github.com/prefixFelix/mobitec-flipdot/go/mobitec/matrix"
+	"github.com/prefixFelix/mobitec-flipdot/src/go/mobitec/fonts"
+	"github.com/prefixFelix/mobitec-flipdot/src/go/mobitec/matrix"
 )
 
 type Display struct {
