@@ -39,8 +39,8 @@ type Font struct {
 
 type Fonts map[string]Font
 
-func (fs Fonts) Get(name string) Font {
-	if f, ok := fs[name]; ok {
+func Get(name string) Font {
+	if f, ok := FONTS[name]; ok {
 		return f
 	}
 	return FONTDEFAULT

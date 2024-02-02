@@ -3,6 +3,8 @@ package mobitec
 import (
 	"errors"
 	"fmt"
+	"github.com/prefixFelix/mobitec-flipdot/src/go/mobitec/fonts"
+	"github.com/prefixFelix/mobitec-flipdot/src/go/mobitec/matrix"
 	"github.com/tarm/serial"
 	"time"
 )
@@ -10,6 +12,8 @@ import (
 const (
 	DELIMITER = 0xff
 )
+
+type packetData []byte
 
 type packet []byte
 
@@ -51,6 +55,35 @@ func (m *messenger) Packet(data []byte) packet {
 	p.Add(p.checksum()...)
 	p.Add(DELIMITER)
 	return p
+}
+
+// TextData returns a mobitec packet with the given text and font.
+func (m *messenger) TextData(text string, font fonts.Font) packetData {
+	data := m.dataHeader(font.Code, 0, font.Height)
+
+	for _, char := range text {
+		if mappedChar, ok := fonts.CHARMAP[char]; ok {
+			data = append(data, mappedChar)
+		} else {
+			data = append(data, byte(char))
+		}
+	}
+
+	return data
+}
+
+func (m *messenger) MatrixData(matrix matrix.Matrix) packetData {
+	var data []byte
+	scm := matrix.ToSubcolumn()
+	for band := range scm {
+		dataHeader := m.dataHeader(fonts.Get(fonts.Font_pixel_subcolumns).Code, 0, band*5+4)
+		data = append(data, dataHeader...)
+		for subcolumn := 0; subcolumn < int(m.width); subcolumn++ {
+			data = append(data, addBits(scm[band][subcolumn]))
+		}
+	}
+
+	return data
 }
 
 //
@@ -107,4 +140,20 @@ func (m *messenger) dataHeader(font byte, hOffset, vOffset int) []byte {
 // returns the packet header
 func (m *messenger) packetHeader() []byte {
 	return []byte{m.address, 0xa2, 0xd0, m.width, 0xd1, m.height}
+}
+
+// addBits takes a slice of bits (as ints) and adds them according
+func addBits(bits []bool) byte {
+	ret := 32
+	for i, bit := range bits {
+		ret += asInt(bit) * (1 << i)
+	}
+	return byte(ret)
+}
+
+func asInt(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
 }

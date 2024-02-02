@@ -44,6 +44,20 @@ func (m *Matrix) Get(row, col int) (bool, error) {
 	return m.data[row][col], nil
 }
 
+func (m *Matrix) SetColumn(colIdx int, col []bool) error {
+	if colIdx < 0 || colIdx >= Width {
+		return errors.New("invalid column index")
+	}
+	if len(col) != Height {
+		return errors.New("invalid column length")
+	}
+
+	for rowIdx, val := range col {
+		m.data[rowIdx][colIdx] = val
+	}
+	return nil
+}
+
 // ToSubcolumn converts the Matrix to a 3D array of subcolumns.
 func (m *Matrix) ToSubcolumn() (subcolumnMatrix [][][]bool) {
 
