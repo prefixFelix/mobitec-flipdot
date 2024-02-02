@@ -139,6 +139,7 @@ class MobitecDisplay:
     def display(self):
         """Sends contents of the buffer to the display."""
         packet = self._create_packet()
+        print(packet)
         with serial.Serial(self.port, 4800, timeout=1) as ser:
             ser.write(packet)
 
@@ -267,7 +268,7 @@ if __name__ == "__main__":
     import datetime
     import math
 
-    port = "/dev/ttyUSB0"
+    port = "COM4"
 
     fonts = {
             # name, height, code
@@ -282,22 +283,29 @@ if __name__ == "__main__":
             "16px_numbers_wide": Font("16px_numbers_wide", 16, 0x6a),
             "pixel_subcolumns": Font("pixel_subcolumns", 5, 0x77)
     }
-    flipdot = MobitecDisplay(port, fonts, address=0x0b, width=28, height=16)
-
-    flipdot.clear_display()
-    # bm = Bitmap(28, 13, 2, 2)
-    # bm.bitmap = designs.standard_m
+    flipdot = MobitecDisplay(port, fonts, address=0x06, width=28*4, height=16)
 
     flipdot.set_position(0, 0)
-    flipdot.set_font("6px")
-    flipdot.print_text("kek")
-    #
-    flipdot.set_position(0, 6)
-    flipdot.set_font("6px")
+    flipdot.set_font("7px")
     flipdot.print_text("kek")
     flipdot.display()
-
-    flipdot.set_position(0, 12)
-    flipdot.set_font("6px")
-    flipdot.print_text("kek")
-    flipdot.display()
+    
+    """
+    while True:
+        flipdot.clear_display()
+        bm = Bitmap(28*4, 16, 0, 0)
+        bm.bitmap = [[1 for _ in range(112)] for _ in range(16)]
+        flipdot.print_image(bm)
+        flipdot.display()
+        sleep(2)
+        
+        
+        bm.bitmap = [[0 for _ in range(112)] for _ in range(16)]
+        flipdot.print_image(bm)
+        
+        #flipdot.set_position(0, 0)
+        #flipdot.set_font("7px")
+        #flipdot.print_text("kek")
+        flipdot.display()
+        sleep(2)
+    """
