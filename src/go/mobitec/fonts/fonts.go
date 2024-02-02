@@ -14,15 +14,15 @@ const (
 
 var (
 	FONTS = Fonts{
-		"7px":               {7, 0x60},
-		"7px_wide":          {7, 0x62},
-		"12px":              {12, 0x63},
-		"13px":              {13, 0x64},
-		"13px_wide":         {13, 0x65},
-		"13px_wider":        {13, 0x69},
-		"16px_numbers":      {16, 0x68},
-		"16px_numbers_wide": {16, 0x6a},
-		"pixel_subcolumns":  {5, 0x77},
+		Font_7px:               {7, 0x60},
+		Font_7px_wide:          {7, 0x62},
+		Font_12px:              {12, 0x63},
+		Font_13px:              {13, 0x64},
+		Font_13px_wide:         {13, 0x65},
+		Font_13px_wider:        {13, 0x69},
+		Font_16px_numbers:      {16, 0x68},
+		Font_16px_numbers_wide: {16, 0x6a},
+		Font_pixel_subcolumns:  {5, 0x77},
 	}
 	FONTDEFAULT = Font{5, 0x77}
 	CHARMAP     = map[rune]byte{
