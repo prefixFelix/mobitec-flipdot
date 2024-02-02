@@ -6,6 +6,12 @@
 
 ## MobiPy
 
+The controller of the flipdot display is normally operated by an HMI as described in the Controller chapter. This HMI can now be replaced with the MobiPy software, which instead handles the communication via RS-485. A total of 3 different message types can be sent to the controller. These are distinguished by different hexadecimal values:
+
+- Text in different fonts and sizes
+- Different symbols
+- Customizable bitmap
+
 ### Setup
 
 ## MobiController
