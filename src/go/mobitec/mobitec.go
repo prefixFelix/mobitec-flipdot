@@ -49,16 +49,22 @@ func (d *Display) Matrix(matrix matrix.Matrix) error {
 	return d.m.Send(pkt)
 }
 
+// BufferMatrix adds the given matrix to the buffer.
+// When finished, the buffer can then be sent to the display with Display.SendBuffer.
 func (d *Display) BufferMatrix(matrix matrix.Matrix) {
 	data := d.m.MatrixData(matrix)
 	d.dataBuffer = append(d.dataBuffer, data)
 }
 
+// BufferText adds the given text to the buffer.
+// When finished, the buffer can then be sent to the display with Display.SendBuffer.
 func (d *Display) BufferText(text string) {
 	data := d.m.TextData(text, d.font)
 	d.dataBuffer = append(d.dataBuffer, data)
 }
 
+// SendBuffer sends the buffer to the display. All Data is OR'd together, meaning that any dots that are ON in any
+// of the buffers will be set in the final display. Everything else is reset.
 func (d *Display) SendBuffer() error {
 	data := d.dataBuffer[0]
 	for i := 1; i < len(d.dataBuffer); i++ {
@@ -72,12 +78,21 @@ func (d *Display) SendBuffer() error {
 // Setters
 //
 
+// SetAddress can be used to set the board's address. 0x6 by default.
+// The address is set on the board itself via the switch.
 func (d *Display) SetAddress(address byte) {
 	d.m.address = address
 }
 
 func (d *Display) SetFont(key string) {
 	d.font = fonts.Get(key)
+}
+
+// SetOffset sets the horizontal and vertical offset for the text.
+// It does not apply to the matrix.
+func (d *Display) SetOffset(horizontal, vertical int) {
+	d.m.hOffset = horizontal
+	d.m.vOffset = vertical
 }
 
 //

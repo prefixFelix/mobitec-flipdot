@@ -45,6 +45,8 @@ type messenger struct {
 	width   byte
 	height  byte
 	serial  *serial.Port
+	hOffset int
+	vOffset int
 }
 
 // Packet returns a mobitec packet with the given data.
@@ -59,7 +61,7 @@ func (m *messenger) Packet(data []byte) packet {
 
 // TextData returns a mobitec packet with the given text and font.
 func (m *messenger) TextData(text string, font fonts.Font) packetData {
-	data := m.dataHeader(font.Code, 0, font.Height)
+	data := m.dataHeader(font.Code, m.hOffset, font.Height+m.vOffset)
 
 	for _, char := range text {
 		if mappedChar, ok := fonts.CHARMAP[char]; ok {
