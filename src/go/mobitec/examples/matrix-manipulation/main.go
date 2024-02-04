@@ -83,4 +83,23 @@ func main() {
 	// Negate
 	m.Negate()
 	toDisplay(m)
+
+	// Clear a part of the display
+	drawWidth := 14
+	drawFrom := WIDTH/2 - drawWidth/2
+	drawTo := drawFrom + drawWidth
+	for i := drawFrom - 1; i <= drawTo+1; i++ {
+		m.SetColumn(i, false)
+	}
+	toDisplay(m)
+
+	// Draw a simple shape
+	for i := drawFrom; i < WIDTH/2; i++ {
+		m.SetColumnFromTo(i, i-drawFrom, HEIGHT-i+drawFrom, true)
+	}
+	for i := drawTo; i >= WIDTH/2; i-- {
+		m.SetColumnFromTo(i, (i-drawTo)*-1, HEIGHT+i-drawTo, true)
+	}
+
+	toDisplay(m)
 }
