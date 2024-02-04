@@ -49,17 +49,23 @@ func (d *Display) Matrix(matrix matrix.Matrix) error {
 	return d.m.Send(pkt)
 }
 
-// BufferMatrix adds the given matrix to the buffer.
-// When finished, the buffer can then be sent to the display with Display.SendBuffer.
-func (d *Display) BufferMatrix(matrix matrix.Matrix) {
-	data := d.m.MatrixData(matrix)
-	d.dataBuffer = append(d.dataBuffer, data)
+// TextCustomFont sends the given text to the display using the given custom font.
+func (d *Display) TextCustomFont(text string, font fonts.CustomFont) error {
+	m := font.GetMatrix(text)
+	return d.Matrix(*m)
 }
 
 // BufferText adds the given text to the buffer.
 // When finished, the buffer can then be sent to the display with Display.SendBuffer.
 func (d *Display) BufferText(text string) {
 	data := d.m.TextData(text, d.font)
+	d.dataBuffer = append(d.dataBuffer, data)
+}
+
+// BufferMatrix adds the given matrix to the buffer.
+// When finished, the buffer can then be sent to the display with Display.SendBuffer.
+func (d *Display) BufferMatrix(matrix matrix.Matrix) {
+	data := d.m.MatrixData(matrix)
 	d.dataBuffer = append(d.dataBuffer, data)
 }
 
@@ -72,6 +78,18 @@ func (d *Display) SendBuffer() error {
 	}
 	pkt := d.m.Packet(data)
 	return d.m.Send(pkt)
+}
+
+// Fill sends a packet to the display that sets all dots to ON.
+func (d *Display) Fill() error {
+	m := matrix.NewFullDisplayMatrix()
+	return d.Matrix(*m)
+}
+
+// Clear sends a packet to the display that sets all dots to OFF.
+func (d *Display) Clear() error {
+	m := matrix.NewDisplayMatrix()
+	return d.Matrix(*m)
 }
 
 //
