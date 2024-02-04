@@ -24,17 +24,20 @@ func main() {
 	display = mobitec.NewDisplay(PORT, WIDTH, HEIGHT)
 	err := display.Open()
 	Check(err)
-
-	// "warm up" the display
-	err = display.Fill()
-	Check(err)
-	wait()
-	err = display.Clear()
-	Check(err)
-	wait()
+	defer display.Close()
 
 	// A DisplayMatrix is a Matrix that automatically gets the correct size for the display
 	m := matrix.NewDisplayMatrix()
+
+	// "warm up" the display by setting/resetting all dots
+	m.Fill()
+
+	// Use display.Matrix to send the matrix to the display
+	err = display.Matrix(*m)
+	Check(err)
+
+	m.Clear()
+	toDisplay(m)
 
 	// Put a column of pixels into the matrix
 	m.SetColumn(WIDTH/2, true)
