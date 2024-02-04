@@ -74,11 +74,34 @@ func (m *messenger) TextData(text string, font fonts.Font) packetData {
 	return data
 }
 
+func anyBool(b []bool) bool {
+	for _, v := range b {
+		if v {
+			return true
+		}
+	}
+	return false
+}
+
 func (m *messenger) MatrixData(matrix matrix.Matrix) packetData {
 	var data []byte
 	scm := matrix.ToSubcolumn()
+
 	for band := range scm {
-		dataHeader := m.dataHeader(fonts.Get(fonts.Font_pixel_subcolumns).Code, 0, band*5+4)
+
+		// skip empty bands
+		isEmpty := true
+		for _, value := range scm[band] {
+			if anyBool(value) {
+				isEmpty = false
+				break
+			}
+		}
+		if isEmpty {
+			continue
+		}
+
+		dataHeader := m.dataHeader(fonts.Get(fonts.Font_pixel_subcolumns).Code, m.hOffset, band*5+4)
 		data = append(data, dataHeader...)
 		for subcolumn := 0; subcolumn < int(m.width); subcolumn++ {
 			data = append(data, addBits(scm[band][subcolumn]))
