@@ -1,5 +1,23 @@
 package matrix
 
+// Fill fills the Matrix.
+func (m *Matrix) Fill() {
+	for i := range m.data {
+		for j := range m.data[i] {
+			m.data[i][j] = true
+		}
+	}
+}
+
+// Clear clears the Matrix.
+func (m *Matrix) Clear() {
+	for i := range m.data {
+		for j := range m.data[i] {
+			m.data[i][j] = false
+		}
+	}
+}
+
 // Set sets the value of a pixel in the Matrix.
 func (m *Matrix) Set(row, col int, value bool) {
 	m.data[row][col] = value
