@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="matrix manipulation" type="GoApplicationRunConfiguration" factoryName="Go Application">
+    <module name="mobitec" />
+    <working_directory value="$PROJECT_DIR$" />
+    <kind value="PACKAGE" />
+    <package value="github.com/prefixFelix/mobitec-flipdot/src/go/mobitec/examples/matrix-manipulation" />
+    <directory value="$PROJECT_DIR$" />
+    <filePath value="$PROJECT_DIR$" />
+    <method v="2" />
+  </configuration>
+</component>
