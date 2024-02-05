@@ -4,7 +4,7 @@ import "errors"
 
 // SetChecked sets the value of a pixel in the Matrix, if the coordinates and value are valid.
 func (m *Matrix) SetChecked(row, col int, value bool) error {
-	if row < 0 || row >= Height || col < 0 || col >= Width {
+	if row < 0 || row >= m.Height || col < 0 || col >= m.Width {
 		return errors.New("invalid coordinates")
 	}
 	m.Set(row, col, value)
@@ -13,10 +13,10 @@ func (m *Matrix) SetChecked(row, col int, value bool) error {
 
 // PutColumnChecked sets the value of a column in the Matrix, if the index and column are valid.
 func (m *Matrix) PutColumnChecked(colIdx int, col []bool) error {
-	if colIdx < 0 || colIdx >= Width {
+	if colIdx < 0 || colIdx >= m.Width {
 		return errors.New("invalid column index")
 	}
-	if len(col) != Height {
+	if len(col) != m.Height {
 		return errors.New("invalid column length")
 	}
 
@@ -26,10 +26,10 @@ func (m *Matrix) PutColumnChecked(colIdx int, col []bool) error {
 
 // PutRowChecked sets the value of a row in the Matrix, if the index and row are valid.
 func (m *Matrix) PutRowChecked(rowIdx int, row []bool) error {
-	if rowIdx < 0 || rowIdx >= Height {
+	if rowIdx < 0 || rowIdx >= m.Height {
 		return errors.New("invalid row index")
 	}
-	if len(row) != Width {
+	if len(row) != m.Width {
 		return errors.New("invalid row length")
 	}
 
@@ -39,7 +39,7 @@ func (m *Matrix) PutRowChecked(rowIdx int, row []bool) error {
 
 // SetColumnChecked sets the value of a column in the Matrix, if the index is valid.
 func (m *Matrix) SetColumnChecked(colIdx int, value bool) error {
-	if colIdx < 0 || colIdx >= Width {
+	if colIdx < 0 || colIdx >= m.Width {
 		return errors.New("invalid column index")
 	}
 
@@ -49,7 +49,7 @@ func (m *Matrix) SetColumnChecked(colIdx int, value bool) error {
 
 // SetRowChecked sets the value of a row in the Matrix, if the index is valid.
 func (m *Matrix) SetRowChecked(rowIdx int, value bool) error {
-	if rowIdx < 0 || rowIdx >= Height {
+	if rowIdx < 0 || rowIdx >= m.Height {
 		return errors.New("invalid row index")
 	}
 
@@ -59,7 +59,7 @@ func (m *Matrix) SetRowChecked(rowIdx int, value bool) error {
 
 // SetRowFromToChecked sets the value of the given row from a given column to another, if the indexes are valid.
 func (m *Matrix) SetRowFromToChecked(rowIdx, from, to int, value bool) error {
-	if rowIdx < 0 || rowIdx >= Height || from < 0 || from >= Width || to < 0 || to >= Width {
+	if rowIdx < 0 || rowIdx >= m.Height || from < 0 || from >= m.Width || to < 0 || to >= m.Width {
 		return errors.New("invalid indexes")
 	}
 
@@ -69,7 +69,7 @@ func (m *Matrix) SetRowFromToChecked(rowIdx, from, to int, value bool) error {
 
 // SetColumnFromToChecked sets the value of the given column from a given row to another, if the indexes are valid.
 func (m *Matrix) SetColumnFromToChecked(colIdx, from, to int, value bool) error {
-	if colIdx < 0 || colIdx >= Width || from < 0 || from >= Height || to < 0 || to >= Height {
+	if colIdx < 0 || colIdx >= m.Width || from < 0 || from >= m.Height || to < 0 || to >= m.Height {
 		return errors.New("invalid indexes")
 	}
 
@@ -79,10 +79,10 @@ func (m *Matrix) SetColumnFromToChecked(colIdx, from, to int, value bool) error 
 
 // RepeatForColumnChecked sets the value of a column in the Matrix to a repeating pattern with a variable length, if the index and values are valid.
 func (m *Matrix) RepeatForColumnChecked(colIdx int, values []bool) error {
-	if colIdx < 0 || colIdx >= Width {
+	if colIdx < 0 || colIdx >= m.Width {
 		return errors.New("invalid column index")
 	}
-	if len(values) != Height {
+	if len(values) != m.Height {
 		return errors.New("invalid values length")
 	}
 
@@ -92,10 +92,10 @@ func (m *Matrix) RepeatForColumnChecked(colIdx int, values []bool) error {
 
 // RepeatForRowChecked sets the value of a row in the Matrix to a repeating pattern with a variable length, if the index and values are valid.
 func (m *Matrix) RepeatForRowChecked(rowIdx int, values []bool) error {
-	if rowIdx < 0 || rowIdx >= Height {
+	if rowIdx < 0 || rowIdx >= m.Height {
 		return errors.New("invalid row index")
 	}
-	if len(values) != Width {
+	if len(values) != m.Width {
 		return errors.New("invalid values length")
 	}
 

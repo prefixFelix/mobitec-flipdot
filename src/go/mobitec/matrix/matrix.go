@@ -8,7 +8,7 @@ const BANDHEIGHT = 5
 
 // Matrix represents a 2D matrix with fixed size, holding values 0, 1, or Empty.
 type Matrix struct {
-	width, height int
+	Width, Height int
 	data          [][]bool
 }
 
@@ -18,12 +18,16 @@ type Matrix struct {
 
 // New creates a new empty Matrix of the given size, initialized to False.
 func New(width, height int) *Matrix {
-	return &Matrix{width, height, newData(false)}
+	m := &Matrix{Width: width, Height: height}
+	m.data = m.newData(false)
+	return m
 }
 
 // NewFull creates a new empty Matrix of the given size, initialized to True.
 func NewFull(width, height int) *Matrix {
-	return &Matrix{width, height, newData(true)}
+	m := &Matrix{Width: width, Height: height}
+	m.data = m.newData(true)
+	return m
 }
 
 //
@@ -32,7 +36,7 @@ func NewFull(width, height int) *Matrix {
 
 // At returns the value of a cell in the Matrix.
 func (m *Matrix) At(row, col int) (bool, error) {
-	if row < 0 || row >= Height || col < 0 || col >= Width {
+	if row < 0 || row >= m.Height || col < 0 || col >= m.Width {
 		return false, errors.New("invalid coordinates")
 	}
 	return m.data[row][col], nil
@@ -48,7 +52,7 @@ func (m *Matrix) ToSubcolumn() (subcolumnMatrix [][][]bool) {
 	// Helper function to create subcolumns for a band
 	createBand := func(startRow, endRow int) [][]bool {
 		var band [][]bool
-		for subcolumns := 0; subcolumns < Width; subcolumns++ {
+		for subcolumns := 0; subcolumns < m.Width; subcolumns++ {
 			var subcolumn []bool
 			for row := startRow; row < endRow; row++ {
 				val := m.data[row][subcolumns]
@@ -60,28 +64,28 @@ func (m *Matrix) ToSubcolumn() (subcolumnMatrix [][][]bool) {
 	}
 
 	// Process full bands of 5 rows
-	for fullBands := 0; fullBands < Height/BANDHEIGHT; fullBands++ {
+	for fullBands := 0; fullBands < m.Height/BANDHEIGHT; fullBands++ {
 		startRow := fullBands * BANDHEIGHT
 		endRow := startRow + BANDHEIGHT
 		band := createBand(startRow, endRow)
 		subcolumnMatrix = append(subcolumnMatrix, band)
 	}
 
-	// Handle the last band if the height of the matrix is not a multiple of 5
-	remainder := Height % BANDHEIGHT
+	// Handle the last band if the Height of the matrix is not a multiple of 5
+	remainder := m.Height % BANDHEIGHT
 	if remainder != 0 {
-		startRow := Height - remainder
-		band := createBand(startRow, Height)
+		startRow := m.Height - remainder
+		band := createBand(startRow, m.Height)
 		subcolumnMatrix = append(subcolumnMatrix, band)
 	}
 
 	return subcolumnMatrix
 }
 
-func newData(val bool) [][]bool {
-	data := make([][]bool, Height)
+func (m *Matrix) newData(val bool) [][]bool {
+	data := make([][]bool, m.Height)
 	for i := range data {
-		data[i] = make([]bool, Width)
+		data[i] = make([]bool, m.Width)
 		for j := range data[i] {
 			data[i][j] = val
 		}
@@ -90,8 +94,8 @@ func newData(val bool) [][]bool {
 }
 
 func (m *Matrix) getColumn() []bool {
-	col := make([]bool, m.height)
-	for i := 0; i < m.height; i++ {
+	col := make([]bool, m.Height)
+	for i := 0; i < m.Height; i++ {
 		col[i] = false
 	}
 	return col

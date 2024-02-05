@@ -97,7 +97,7 @@ func (m *Matrix) ShiftLeft() {
 // ShiftRight shifts the Matrix to the right by one column.
 func (m *Matrix) ShiftRight() {
 	for i := range m.data {
-		m.data[i] = append(m.getColumn(), m.data[i][:Width-1]...)
+		m.data[i] = append(m.getColumn(), m.data[i][:m.Width-1]...)
 	}
 }
 
