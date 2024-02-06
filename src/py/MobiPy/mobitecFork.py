@@ -6,8 +6,9 @@ https://github.com/Nosen92/maskin-flipdot/blob/main/mobitec.py
 """
 
 import serial
-import fonts
-import numpy as np
+import font
+import symbol
+import bitmap
 
 SPECIAL_CHARS = {
     "Å": 0x5d,
@@ -80,9 +81,9 @@ class MobitecDisplay:
     def _serialize_bitmap(self, bitmap):
         """Serializes bitmap to mobitec protocol."""
         data = bytearray()
-        mobitec_subcolumn_matrix = bitmap.convert_to_sm()
+        mobitec_subcolumn_matrix = bitmap.convert_to_sub_column()
         for band in range(len(mobitec_subcolumn_matrix)):
-            data_header = self._get_data_header(0x77, bitmap.pos_x, bitmap.pos_y + band * 5 + 4)
+            data_header = self._get_data_header(0x77, bitmap.x_pos, bitmap.y_pos + band * 5 + 4)
             data.extend(data_header)
             for subcolumn in range(bitmap.width):
                 subcolumn_code = self.addBits(mobitec_subcolumn_matrix[band][subcolumn])
@@ -99,9 +100,7 @@ class MobitecDisplay:
         """Serializes text object to mobitec protocol.
         Accounts for deviations from ASCII codes."""
         horizontal_offset = text.pos_x
-        vertical_offset = text.pos_y + text.font.height  # Compensation for quirky offset
-        # if text.font.name == "pixel_subcolumns":
-        #     vertical_offset -= 1  # Don't ask me why
+        vertical_offset = text.pos_y + text.font.height
         data = self._get_data_header(text.font.code, horizontal_offset, vertical_offset)
 
         for char in text.string:
@@ -118,19 +117,26 @@ class MobitecDisplay:
 
     def set_text(self, string, font, x_pos=0, y_pos=0):
         """Adds text to the text buffer."""
-        text = Text(string, font, x_pos, y_pos)
+        text = _BasicText(string, font, x_pos, y_pos)
         self.text_buffer.append(text)
 
-    def set_bitmap(self, bitmap, x_pos=0, y_pos=0):
-        """Adds bitmap to the bitmap buffer."""
-        self.bitmap_buffer.append(bitmap)
+    def set_symbol(self, symbol, x_pos=0, y_pos=0):
+        """Text Wrapper"""
+        text = _BasicText(symbol.value, symbol.font, x_pos, y_pos)
+        self.text_buffer.append(text)
 
-class Text:
+    def set_bitmap(self, bm, x_pos=0, y_pos=0):
+        """Adds bitmap to the bitmap buffer."""
+        bm.x_pos = x_pos
+        bm.y_pos = y_pos
+        self.bitmap_buffer.append(bm)
+
+class _BasicText:
     """
     Basic text objects. Gets queued in the buffer.
     Attributes:
         string (string): Text to be written.
-        font (Font): Font to write the text with.
+        font (Font): Font to write the text width.
         pos_x (byte): Horizontal offset from left side.
         pos_y (byte): Vertical offset from upper side.
     """
@@ -140,58 +146,10 @@ class Text:
         self.pos_x = pos_x
         self.pos_y = pos_y
 
-class Bitmap:
-    """
-    Basic bitmap objects. Gets queued in the image buffer.
-    Attributes:
-        width (byte): Bitmap width.
-        height (byte): Bitmap height.
-        pos_x (byte): Horizontal offset from left side.
-        pos_y (byte): Vertical offset from upper side.
-        bitmap (list of lists): Bitmap. Adressed like this: bitmap[y][x]
-    """
-    def __init__(self, width, height, pos_x, pos_y):
-        self.width = width
-        self.height = height
-        self.pos_x = pos_x
-        self.pos_y = pos_y
-        self.bitmap = [[False] * self.width for _ in range(self.height)]  # Create x*y matrix
-
-    def convert_to_sm(self):
-        """Converts a regular bitmap to subcolumn matrix."""
-        subcolumn_matrix = []
-        for full_bands in range(self.height//5):
-            band = []
-            for subcolumns in range(self.width):
-                subcolumn = []
-                for subcolumn_pixel in range(5):
-                    subcolumn.append(self.bitmap[full_bands * 5 + subcolumn_pixel][subcolumns])
-                band.append(subcolumn)
-            subcolumn_matrix.append(band)
-        if self.height%5 != 0:
-            band = []
-            for subcolumns in range(self.width):
-                subcolumn = []
-                for subcolumn_pixel in range(self.height - self.height%5, self.height):
-                    subcolumn.append(self.bitmap[subcolumn_pixel][subcolumns])
-                band.append(subcolumn)
-            subcolumn_matrix.append(band)
-        return subcolumn_matrix
-
-    def __eq__(self, other):
-        for y in range(0, self.height):
-            for x in range(0, self.width):
-                try:
-                    if self.bitmap[y][x] != other.bitmap[y][x]:
-                        return False
-                except Exception as e:
-                    print("Error!")
-                    print(e)
-                    return False
-        return True
-
 
 if __name__ == '__main__':
+    """ DEV TEST """
+
     flipdot = MobitecDisplay('/dev/ttyUSB0', address=0x0b, width=28, height=16)
 
     circle = [
@@ -209,6 +167,23 @@ if __name__ == '__main__':
         [0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0],
         [0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0]
     ]
-    flipdot.set_text('Ae1', fonts.F15_MEDIUM)
 
+    test = [[1, 1, 1, 1],
+            [1, 0, 0, 1],
+            [1, 0, 0, 1],
+            [1, 1, 1, 1]]
+
+    bm = bitmap.Bitmap(28, 16)
+
+    bm.fill(1)
+    bm.invert()
+    bm.line_horizontal(1,1, 10, 2, 1)
+    bm.line_vertical(1, 1, 10, 2, 1)
+    bm.line_diagonal_right(2, 2, 10, 2, 1)
+    bm.dot(14, 14, 1)
+    bm.rectangle(18, 3, 4, 4, 1)
+    bm.shift_left(11, keep=True)
+
+    flipdot.set_bitmap(bm)
+    flipdot.set_symbol(symbol.SOCCER1)
     flipdot.display()

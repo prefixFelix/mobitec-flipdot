@@ -3,13 +3,34 @@
 ## Pinout
 
 ```
+Lanes (top to bittom):
+26 Not connected to somthing, except the plug
+23
+24
+21
+22
+19 Not connected to somthing, except the plug
+5V
+GND
+24V
+---------------------------------------
+      Main plug
 
-|  A  | 
-| --- | VCC |
-| GND | GND |
-
+    |  A  | 
+  3 | --- | VCC | 4
+  1 | GND | GND | 2
+        Bottom
+----------------------------------------
 TC74 HC02A?		-> Quad 2-Input NOR Gate
 	-> 7402
+OUT |     | VCC |
+ IN |   9 |
+ IN |  12 |
+OUT |
+ IN |  17 |  y? | OUT
+ IN |  17 |  x? | IN
+    | GND |  x? | IN
+	
 74V HC139		-> Dual 2-to-4 Decoder/Demultiplexer
 	-> 74LS139
 
@@ -18,9 +39,23 @@ ULN2003A 		-> High-Current Darlington Transistor Arrays !5V->24V!
 TD62783AF 		-> HIGH−VOLTAGE SOURCE DRIVER !5V->24V!
 ```
 
+
+
+```
+Example:
+- Switching dot x=4, y=7 form black to white
+	- Panel = 0
+	- 
+
+```
+
+
+
 ## Anton Christensen C-Code
 
 ```c
+// Board used: esp32doit-devkit-v1
+
 // Current display state; Colors: WHITE = 0, BLACK = 1, TOGGLE 2, DONOTHING 3
 unsigned char screenState[PANEL_WIDTH][PANEL_HEIGHT] PROGMEM; // PROGMEM Daten im flash speichern
 

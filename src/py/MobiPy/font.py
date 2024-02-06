@@ -34,8 +34,8 @@ F13_NUMBERS             = Font(15, 0x79)    # Only numbers and A
 F12_NUMBERS             = Font(11, 0x6C)    # Only numbers
 
 F9                      = Font(11, 0x62)    # Normal width
-F9_MEDIUM_UPPER_NUMBERS = Font(8, 0x70)     # Mono
-F9_SMALL_UPPER_NUMBERS  = Font(8, 0x75)     # Mono
+F9_MEDIUM_NUMBERS_UPPER = Font(8, 0x70)     # Mono
+F9_SMALL_NUMBERS_UPPER  = Font(8, 0x75)     # Mono
 
 F7                      = Font(8, 0x64)     # Normal width
 F7_MEDIUM               = Font(8, 0x65)     # Medium width
@@ -43,13 +43,3 @@ F7_SMALL_UPPER          = Font(6, 0x6D)     # Small width
 
 F6                      = Font(6, 0x66)
 F5                      = Font(4, 0x72)
-
-
-class Symbol:
-    """
-    Basic symbol objects.
-    Attributes:
-    """
-    def __init__(self, value):
-        self.value = value
-        self.font = Font(0, 0x67)
