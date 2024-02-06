@@ -104,10 +104,6 @@ func (m *messenger) MatrixData(matrix matrix.Matrix) packetData {
 		dataHeader := m.dataHeader(fonts.Get(fonts.Font_pixel_subcolumns).Code, m.hOffset, band*5+4)
 		data = append(data, dataHeader...)
 		for subcolumn := 0; subcolumn < int(matrix.Width); subcolumn++ {
-			fmt.Println(band)
-			fmt.Println(subcolumn)
-			fmt.Println(int(m.width))
-			fmt.Println()
 			data = append(data, addBits(scm[band][subcolumn]))
 		}
 	}
