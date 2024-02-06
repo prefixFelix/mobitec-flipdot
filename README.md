@@ -50,18 +50,6 @@ The controller of the flipdot display is normally operated by an HMI as describe
 
 ### General
 
-```
-Output connector:
-	- 26 pin (13 pin x2)
-	Pinout (left to right, notch top)
-		Top row
-			- 11 VCC (24)
-			- 12 GND (25)
-		Bottom row
-			- 24 VCC
-			- 25 GND
-```
-
 ## Related projects
 
 - **[flipdot-mobitec (Anton Christensen)](https://github.com/anton-christensen/flipdot-mobitec)**
