@@ -7,7 +7,7 @@ func (m *Matrix) SetChecked(row, col int, value bool) error {
 	if row < 0 || row >= m.Height || col < 0 || col >= m.Width {
 		return errors.New("invalid coordinates")
 	}
-	m.Set(row, col, value)
+	m.Set(row, col)
 	return nil
 }
 
@@ -43,37 +43,39 @@ func (m *Matrix) SetColumnChecked(colIdx int, value bool) error {
 		return errors.New("invalid column index")
 	}
 
-	m.SetColumn(colIdx, value)
+	m.SetColumn(colIdx)
 	return nil
 }
 
 // SetRowChecked sets the value of a row in the Matrix, if the index is valid.
-func (m *Matrix) SetRowChecked(rowIdx int, value bool) error {
+func (m *Matrix) SetRowChecked(rowIdx int) error {
 	if rowIdx < 0 || rowIdx >= m.Height {
 		return errors.New("invalid row index")
 	}
 
-	m.SetRow(rowIdx, value)
+	m.SetRow(rowIdx)
 	return nil
 }
 
 // SetRowFromToChecked sets the value of the given row from a given column to another, if the indexes are valid.
-func (m *Matrix) SetRowFromToChecked(rowIdx, from, to int, value bool) error {
-	if rowIdx < 0 || rowIdx >= m.Height || from < 0 || from >= m.Width || to < 0 || to >= m.Width {
+// To can be -1 to indicate the end of the row.
+func (m *Matrix) SetRowFromToChecked(rowIdx, from, to int) error {
+	if rowIdx < 0 || rowIdx >= m.Height || from < 0 || from >= m.Width || to < -1 || to >= m.Width {
 		return errors.New("invalid indexes")
 	}
 
-	m.SetRowFromTo(rowIdx, from, to, value)
+	m.SetRowFromTo(rowIdx, from, to)
 	return nil
 }
 
 // SetColumnFromToChecked sets the value of the given column from a given row to another, if the indexes are valid.
-func (m *Matrix) SetColumnFromToChecked(colIdx, from, to int, value bool) error {
-	if colIdx < 0 || colIdx >= m.Width || from < 0 || from >= m.Height || to < 0 || to >= m.Height {
+// To can be -1 to indicate the end of the column.
+func (m *Matrix) SetColumnFromToChecked(colIdx, from, to int) error {
+	if colIdx < 0 || colIdx >= m.Width || from < 0 || from >= m.Height || to < -1 || to >= m.Height {
 		return errors.New("invalid indexes")
 	}
 
-	m.SetColumnFromTo(colIdx, from, to, value)
+	m.SetColumnFromTo(colIdx, from, to)
 	return nil
 }
 
@@ -100,5 +102,14 @@ func (m *Matrix) RepeatForRowChecked(rowIdx int, values []bool) error {
 	}
 
 	m.RepeatForRow(rowIdx, values)
+	return nil
+}
+
+// FillBoundsChecked fills all pixels connected to the (x, y) pixel until it meets boundaries.
+func (m *Matrix) FillBoundsChecked(x, y int) error {
+	if x < 0 || x >= m.Width || y < 0 || y >= m.Height {
+		return errors.New("coordinates out of bounds")
+	}
+	m.Fill()
 	return nil
 }

@@ -1,5 +1,11 @@
 package matrix
 
+var currentValue = true
+
+//
+// General
+//
+
 // Fill fills the Matrix.
 func (m *Matrix) Fill() {
 	for i := range m.data {
@@ -18,10 +24,65 @@ func (m *Matrix) Clear() {
 	}
 }
 
-// Set sets the value of a pixel in the Matrix.
-func (m *Matrix) Set(row, col int, value bool) {
-	m.data[row][col] = value
+//
+// Setters
+//
+
+// SetValue sets which value is to be used for the manipulation functions. It's like choosing the color of your pen.
+func (m *Matrix) SetValue(value bool) {
+	currentValue = value
 }
+
+// Set sets the value of a pixel in the Matrix.
+func (m *Matrix) Set(col, row int) {
+	m.data[row][col] = currentValue
+}
+
+// SetColumn sets the value of a column in the Matrix.
+func (m *Matrix) SetColumn(colIdx int) {
+	for rowIdx := range m.data {
+		m.data[rowIdx][colIdx] = currentValue
+	}
+}
+
+// SetRow sets the value of a row in the Matrix.
+func (m *Matrix) SetRow(rowIdx int) {
+	for colIdx := range m.data[rowIdx] {
+		m.data[rowIdx][colIdx] = currentValue
+	}
+}
+
+// SetColumnFromTo sets the value of the given column from a given row to another.
+// To can be -1 to indicate the end of the column.
+func (m *Matrix) SetColumnFromTo(colIdx, from, to int) {
+	if to == -1 {
+		to = m.Height
+	}
+	for rowIdx := from; rowIdx < to; rowIdx++ {
+		m.data[rowIdx][colIdx] = currentValue
+	}
+}
+
+// SetRowFromTo sets the value of the given row from a given column to another.
+// To can be -1 to indicate the end of the row.
+func (m *Matrix) SetRowFromTo(rowIdx, from, to int) {
+	if to == -1 {
+		to = m.Width
+	}
+	for colIdx := from; colIdx < to; colIdx++ {
+		m.data[rowIdx][colIdx] = currentValue
+	}
+}
+
+// FillBounds fills all pixels connected to the (x, y) pixel until it meets boundaries.
+// Boundaries meaning either the edge of the display or other connected pixels
+func (m *Matrix) FillBounds(x, y int) {
+	m.fillHelper(x, y)
+}
+
+//
+// Other Manipulation
+//
 
 // PutColumn sets the value of a column in the Matrix.
 func (m *Matrix) PutColumn(colIdx int, col []bool) {
@@ -33,34 +94,6 @@ func (m *Matrix) PutColumn(colIdx int, col []bool) {
 // PutRow sets the value of a row in the Matrix.
 func (m *Matrix) PutRow(rowIdx int, row []bool) {
 	copy(m.data[rowIdx], row)
-}
-
-// SetColumn sets the value of a column in the Matrix.
-func (m *Matrix) SetColumn(colIdx int, value bool) {
-	for rowIdx := range m.data {
-		m.data[rowIdx][colIdx] = value
-	}
-}
-
-// SetRow sets the value of a row in the Matrix.
-func (m *Matrix) SetRow(rowIdx int, value bool) {
-	for colIdx := range m.data[rowIdx] {
-		m.data[rowIdx][colIdx] = value
-	}
-}
-
-// SetColumnFromTo sets the value of the given column from a given row to another.
-func (m *Matrix) SetColumnFromTo(colIdx, from, to int, value bool) {
-	for rowIdx := from; rowIdx < to; rowIdx++ {
-		m.data[rowIdx][colIdx] = value
-	}
-}
-
-// SetRowFromTo sets the value of the given row from a given column to another.
-func (m *Matrix) SetRowFromTo(rowIdx, from, to int, value bool) {
-	for colIdx := from; colIdx < to; colIdx++ {
-		m.data[rowIdx][colIdx] = value
-	}
 }
 
 // RepeatForColumn sets the value of a column in the Matrix to a repeating pattern with a variable length.
@@ -108,4 +141,25 @@ func (m *Matrix) Negate() {
 			m.data[i][j] = !m.data[i][j]
 		}
 	}
+}
+
+//
+// Helper
+//
+
+// fillHelper is a recursive helper function to implement the fill functionality.
+func (m *Matrix) fillHelper(x, y int) {
+	// Base case: Check if pixel is out of bounds or already filled/ a wall
+	if x < 0 || x >= m.Width || y < 0 || y >= m.Height || m.data[y][x] {
+		return
+	}
+
+	// Fill the current pixel
+	m.data[y][x] = currentValue
+
+	// Recursively fill the neighboring pixels
+	m.fillHelper(x+1, y) // Right
+	m.fillHelper(x-1, y) // Left
+	m.fillHelper(x, y+1) // Down
+	m.fillHelper(x, y-1) // Up
 }
