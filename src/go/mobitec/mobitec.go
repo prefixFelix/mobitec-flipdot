@@ -62,6 +62,24 @@ func (d *Display) BufferText(text string) {
 	d.dataBuffer = append(d.dataBuffer, data)
 }
 
+// BufferTextAt adds the given text to the buffer at the given offset.
+func (d *Display) BufferTextAt(offX, offY int, text string) {
+	d.SetOffset(offX, offY)
+	d.BufferText(text)
+}
+
+// BufferTextWith adds the given text to the buffer using the given font.
+func (d *Display) BufferTextWith(font string, text string) {
+	d.SetFont(font)
+	d.BufferText(text)
+}
+
+// BufferTextWithAt adds the given text to the buffer using the given font and offset.
+func (d *Display) BufferTextWithAt(font string, offX, offY int, text string) {
+	d.SetFont(font)
+	d.BufferTextAt(offX, offY, text)
+}
+
 // BufferMatrix adds the given matrix to the buffer.
 // When finished, the buffer can then be sent to the display with Display.SendBuffer.
 func (d *Display) BufferMatrix(matrix matrix.Matrix) {
@@ -102,6 +120,7 @@ func (d *Display) SetAddress(address byte) {
 	d.m.address = address
 }
 
+// SetFont sets the font for the display. Does not apply to previously buffered messages.
 func (d *Display) SetFont(key string) {
 	d.font = fonts.Get(key)
 }
