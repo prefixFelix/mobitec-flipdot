@@ -24,6 +24,36 @@ func (m *Matrix) Clear() {
 	}
 }
 
+type Offset struct {
+	X  int
+	Y  int
+	Re int
+}
+
+// DrawPath draws a path in the Matrix based on a start position and a list of offsets.
+// Offsets are a list of Os, which are a struct with X and Y values and a Re value.
+// The Re value indicates how many times the offset should be applied.
+// A pixel is drawn at every step.
+//
+// For example:
+// DrawPath(0, 0, []matrix.Offset{{X: 1}, {Y: -1}, {X: 1, Re: 4}, {X: 1, Y: 1, Re: 3}})
+// Would draw one pixel to the right, one up, four to the right, then diagonally down-right three pixels.
+func (m *Matrix) DrawPath(startX, startY int, offsets []Offset) {
+	m.Set(startX, startY)
+
+	// Apply each offset to the current position and set the value
+	for _, offset := range offsets {
+		if offset.Re == 0 {
+			offset.Re = 1
+		}
+		for i := 0; i < offset.Re; i++ {
+			startX += offset.X
+			startY += offset.Y
+			m.Set(startX, startY)
+		}
+	}
+}
+
 //
 // Setters
 //
