@@ -4,6 +4,7 @@ class Symbol:
     """
     Basic symbol objects.
     Attributes:
+        value (ASCII): Symbol value used by the sign.
     """
     def __init__(self, value):
         self.value = value

@@ -6,9 +6,6 @@ https://github.com/Nosen92/maskin-flipdot/blob/main/mobitec.py
 """
 
 import serial
-import font
-import symbol
-import bitmap
 
 SPECIAL_CHARS = {
     "Å": 0x5d,
@@ -27,28 +24,22 @@ class MobitecDisplay:
         self.width = width
         self.height = height
 
-        self.text_buffer = []
-        self.bitmap_buffer = []
+        self.data_buffer = []
 
     def display(self):
         """Sends contents of the buffer to the display."""
         packet = self._create_packet()
         with serial.Serial(self.port, 4800, timeout=1) as ser:
             ser.write(packet)
-        self.text_buffer = []
-        self.bitmap_buffer = []
+        # Clear buffer
+        self.data_buffer = []
 
     def _create_packet(self):
-        """Serializes all data and generates a complete Mobitec packet."""
+        """Generate a Mobitec packet with the data from the buffer."""
         packet = bytearray()
         packet.append(0xFF) # Start byte
         packet.extend(self._get_packet_header())
-
-        for text in self.text_buffer:
-            packet.extend(self._serialize_text(text))
-        for bm in self.bitmap_buffer:
-            packet.extend(self._serialize_bitmap(bm))
-
+        packet.extend(self.data_buffer)
         packet.extend(self._calculate_check_sum(packet))
         packet.append(0xFF) # Stop byte
 
@@ -86,11 +77,11 @@ class MobitecDisplay:
             data_header = self._get_data_header(0x77, bitmap.x_pos, bitmap.y_pos + band * 5 + 4)
             data.extend(data_header)
             for subcolumn in range(bitmap.width):
-                subcolumn_code = self.addBits(mobitec_subcolumn_matrix[band][subcolumn])
+                subcolumn_code = self._add_bits(mobitec_subcolumn_matrix[band][subcolumn])
                 data.append(subcolumn_code)
         return data
 
-    def addBits(self, bits):
+    def _add_bits(self, bits):
         ret = 32
         for i in range(len(bits)):
             ret += bits[i]*2**i
@@ -115,21 +106,42 @@ class MobitecDisplay:
         """Generates mobitec protocol data section header."""
         return bytearray([0xD2, horizontal_offset, 0xD3, vertical_offset, 0xD4, font])
 
-    def set_text(self, string, font, x_pos=0, y_pos=0):
-        """Adds text to the text buffer."""
+    """ Public functions"""
+
+    def buffer_text(self, string, font, x_pos=0, y_pos=0):
+        """Add text data to the buffer."""
         text = _BasicText(string, font, x_pos, y_pos)
-        self.text_buffer.append(text)
+        self.data_buffer.extend(self._serialize_text(text))
 
-    def set_symbol(self, symbol, x_pos=0, y_pos=0):
-        """Text Wrapper"""
+    def text(self, string, font, x_pos=0, y_pos=0):
+        """Send text directly to the display."""
+        text = _BasicText(string, font, x_pos, y_pos)
+        self.data_buffer.extend(self._serialize_text(text))
+        self.display()
+
+    def buffer_symbol(self, symbol, x_pos=0, y_pos=0):
+        """Add symbol data to the buffer."""
         text = _BasicText(symbol.value, symbol.font, x_pos, y_pos)
-        self.text_buffer.append(text)
+        self.data_buffer.extend(self._serialize_text(text))
 
-    def set_bitmap(self, bm, x_pos=0, y_pos=0):
-        """Adds bitmap to the bitmap buffer."""
+    def symbol(self, symbol, x_pos=0, y_pos=0):
+        """Send symbol directly to the display."""
+        text = _BasicText(symbol.value, symbol.font, x_pos, y_pos)
+        self.data_buffer.extend(self._serialize_text(text))
+        self.display()
+
+    def buffer_bitmap(self, bm, x_pos=0, y_pos=0):
+        """Add bitmap data to the buffer."""
         bm.x_pos = x_pos
         bm.y_pos = y_pos
-        self.bitmap_buffer.append(bm)
+        self.data_buffer.extend(self._serialize_bitmap(bm))
+
+    def bitmap(self, bm, x_pos=0, y_pos=0):
+        """Send bitmap directly to the display."""
+        bm.x_pos = x_pos
+        bm.y_pos = y_pos
+        self.data_buffer.extend(self._serialize_bitmap(bm))
+        self.display()
 
 class _BasicText:
     """

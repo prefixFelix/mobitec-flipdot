@@ -10,7 +10,7 @@ class Bitmap:
         bitmap (list of lists): Bitmap. Adressed like this: bitmap[y][x]
     """
     def __init__(self, width, height):
-        self.width = width  # todo set based on display size
+        self.width = width
         self.height = height
         self.bitmap = np.zeros((height, width), dtype=bool)
         self.x_pos = 0
