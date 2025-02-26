@@ -29,6 +29,7 @@ class MobitecDisplay:
     def display(self):
         """Sends contents of the buffer to the display."""
         packet = self._create_packet()
+        print(packet)
         with serial.Serial(self.port, 4800, timeout=1) as ser:
             ser.write(packet)
         # Clear buffer
@@ -78,6 +79,7 @@ class MobitecDisplay:
             data.extend(data_header)
             for subcolumn in range(bitmap.width):
                 subcolumn_code = self._add_bits(mobitec_subcolumn_matrix[band][subcolumn])
+                print(subcolumn_code)
                 data.append(subcolumn_code)
         return data
 

@@ -72,7 +72,7 @@ class Bitmap:
         print('todo')
 
     def dot(self, x_pos, y_pos, color):
-        self.bitmap[x_pos, y_pos] = color
+        self.bitmap[y_pos, x_pos] = color
 
     def random(self):
         print('todo')

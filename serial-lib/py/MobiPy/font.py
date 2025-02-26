@@ -42,4 +42,4 @@ F7_MEDIUM               = Font(8, 0x65)     # Medium width
 F7_SMALL_UPPER          = Font(6, 0x6D)     # Small width
 
 F6                      = Font(6, 0x66)
-F5                      = Font(4, 0x72)
+F5                      = Font(4, 0x72)     # Not working?

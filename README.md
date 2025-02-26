@@ -1,63 +1,57 @@
-# Mobitec Flipdot Display
+
+<div align="center">
+<img alt="Mobitec logo" src="docs/img/logo.png" heigth=200 width=300/>
+<h1>Mobitec Flipdot Display</h1>
+</div>
+
+> [!WARNING]
+>
+> This repository is still **work in progress**!
 
 ## Features
 
-## Overview
+- Golang / Python library to control the mobitec flipdot displays via serial with the original controller (*completed*).
+- Replacement of the control board with an Raspberry Pi Pico / ESP32 to control the display directly (*under development*).
+- Documentation of the original [control board](docs/controller.md) (*completed*).
 
-## MobiPy
+## Serial libraries (original controller)
 
-The controller of the flipdot display is normally operated by an HMI as described in the Controller chapter. This HMI can now be replaced with the MobiPy software, which instead handles the communication via RS-485. A total of 3 different message types can be sent to the controller. These are distinguished by different hexadecimal values:
+Controlling the flipdot display via the original controller is simple, effective and accessible, because very little additional hardware is required (namely just a RS-485 adapter, like [this one](https://www.berrybase.de/en/usb-rs485-konverter)).  You can find further instructions on how to connect everything [here](docs/controller.md#Connecting-to-the-Board). The Mobitec proprietary protocol is used for communication via the serial interface. Mobitec's own protocol is now used via the serial interface (very detailed [protocol description](https://github.com/Nosen92/maskin-flipdot/blob/main/protocol.md)). Basically, the controller can accept and display *text* in different fonts/sizes, predefined *symbols* and freely designable *bitmaps*. A list of fonts / symbols for our variations of boards can be found in [fonts.md](docs/fonts.md).  
+**Capabilities / Limitations:**  
+The controller is slow. Processing a command and updating the display takes several seconds. Animations can therefore not be displayed (< 1 FPS). However, this limitation has nothing to do with the flipdot display but with the controller.
 
-- Text in different fonts and sizes
-- Different symbols
-- Customizable bitmap
+### Golang
 
-### Setup
+### Python
 
-### Fonts
+> [!TIP]
+> A complete list of all functions and their example use can be found in [example.py](serial-lib/py/MobiPy/example.py).
 
-> not quite right, look in the fonts python file
+The python libary offers the following featrues:
 
-| Address | Height    | Spacing ()          |        | Size   | Monospaced          | Note                                        |
-|---------|-----------|---------------------|--------|--------|---------------------|---------------------------------------------|
-| 0x61    | 13px      | Wide                | Normal | Normal | No                  |                                             |
-| 0x62    | 9px       | Wide                | Normal | Normal | No                  |                                             |
-| 0x63    | 19px      |                     |        |        |                     |                                             |
-| 0x64    | 7px       | Wide                |        |        |                     |                                             |
-| 0x65    | 7px       | Medium              |        |        |                     |                                             |
-| 0x66    | 6px       | -                   |        |        |                     |                                             |
-| 0x67    | -         |                     |        |        |                     | Symbols                                     |
-| 0x68    | 16px      |                     |        |        |                     | Gg not in line                              |
-| 0x69    | 13px      | Medium              |        |        | No                  |                                             |
-| 0x6A    | 20 / 16px |                     |        |        |                     | No lowercase, numbers 20px and letters 16px |
-| 0x6B    | 20px?     |                     |        |        |                     | No lowercase                                |
-| 0x6C    | 12px      |                     |        |        |                     | Only numbers                                |
-| 0x6D    | 7px       | Small               |        |        |                     | Only uppercase                              |
-| 0x6E    | 16px      |                     |        |        |                     | Only uppercase A, B and numbers             |
-| 0x6F    | 14px      |                     |        |        |                     | Only numbers                                |
-| 0x70    | 9px       | Medium              |        |        | Yes                 | No lowercase                                |
-| 0x71    | 15px      |                     |        |        |                     |                                             |
-| 0x72    | 5px       | -                   |        |        |                     |                                             |
-| 0x73    | 13px      | Smaller then Medium |        |        | Yes, except numbers |                                             |
-| 0x74    | 16px      |                     |        |        |                     | Only Numbers                                |
-| 0x75    | 9px       | Small               |        |        | Yes                 | No lowercase                                |
-| 0x76    | 15px      | Wide                |        |        |                     |                                             |
-| 0x77    | -         |                     |        |        |                     | Bitmap                                      |
-| 0x78    | 16px      |                     |        |        |                     | Upper/lowercase different hight             |
-| 0x79    | 13px      |                     |        |        | Kinda               | Only numbers                                |
+- Text with all available fonts / sizes.
+- Symbols
+- Bitmap: basic operations (fill, invert shift); basic geometric shapes (dot, line, rectangle)
 
-## MobiController
+## Replacement controller board
 
-### General
+### Parts / Order
+
+### Flash
+
+### Usage
 
 ## Related projects
 
 - **[flipdot-mobitec (Anton Christensen)](https://github.com/anton-christensen/flipdot-mobitec)**
     - Custom controller based on an ESP32
-- **[flipdot](https://github.com/openspaceaarhus/flipdot)**
+- **[flipdot (Open Space Aarhus)](https://github.com/openspaceaarhus/flipdot)**
     - Custom controller based on an ATmega
     - [Protocol description?](https://groups.google.com/g/openspaceaarhus/c/YMDPcS3pnHA)
     - [Photos / videos](https://www.vagrearg.org/content/dotflipctl)
+- **[flipdot-games (Anton Berneving)](https://github.com/antbern/flipdot-games)**
+    - Custom controller board based on an Raspberry Pi Pico
+    - Firmware written in Rust
 - **[mobitec-rs485 (duffrohde)](https://github.com/duffrohde/mobitec-rs485)**
     - Basic C RS-485 API
 - **[pymobitec-flipdot (Bjarne)](https://github.com/bjarnekvae/pymobitec-flipdot)**
@@ -66,6 +60,7 @@ The controller of the flipdot display is normally operated by an HMI as describe
     - Simple Python RS-485 API
 - **[maskin-flipdot (Nosen92)](https://github.com/Nosen92/maskin-flipdot)**
     - More advanced Python RS-485 API
+    - Detailed serial protocol [documentation](https://github.com/Nosen92/maskin-flipdot/blob/main/protocol.md)
 - [**elektronikforumet**](https://elektronikforumet.com/forum/viewtopic.php?t=65264)
     - Protocol information
 - [**buselektro**](https://www.busselektro.no/tips-og-funksjonsbeskrivelser/mobitec-rs485/)
