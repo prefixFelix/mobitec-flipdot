@@ -65,3 +65,5 @@ The python libary offers the following featrues:
     - Protocol information
 - [**buselektro**](https://www.busselektro.no/tips-og-funksjonsbeskrivelser/mobitec-rs485/)
     - Protocol information
+- **[Rainer Radow](https://radow.org/flip-dot-en.php)**
+    - Useful knowledge about flipdots

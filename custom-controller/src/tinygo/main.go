@@ -1,3 +1,7 @@
+//
+// Based on flipdot-games Rust code from Anton Berneving (https://github.com/antbern/flipdot-games/tree/main/pico-firmware/src/driver.rs)
+//
+
 package main
 
 import (
@@ -18,8 +22,8 @@ const (
 	DriveLow  DriveDirection = false
 )
 
-// LEDMatrix represents the LED matrix display
-type LEDMatrix struct {
+// FlipdotMatrix represents the Flipdot matrix display
+type FlipdotMatrix struct {
 	rows    int
 	cols    int
 	rowAddr [5]machine.Pin
@@ -36,9 +40,9 @@ type LEDMatrix struct {
 	colLookup []uint8
 }
 
-// NewLEDMatrix creates a new LED matrix controller
-func NewLEDMatrix(rows, cols int) *LEDMatrix {
-	m := &LEDMatrix{
+// NewFlipdotMatrix creates a new Flipdot matrix controller
+func NewFlipdotMatrix(rows, cols int) *FlipdotMatrix {
+	m := &FlipdotMatrix{
 		rows: rows,
 		cols: cols,
 		// Initialize GPIO pins
@@ -97,7 +101,7 @@ func NewLEDMatrix(rows, cols int) *LEDMatrix {
 }
 
 // setRowAddress sets the row address pins based on lookup table
-func (m *LEDMatrix) setRowAddress(row uint8) {
+func (m *FlipdotMatrix) setRowAddress(row uint8) {
 	addr := m.rowLookup[row]
 	for i := range m.rowAddr {
 		if (addr & (1 << uint8(i))) != 0 {
@@ -109,7 +113,7 @@ func (m *LEDMatrix) setRowAddress(row uint8) {
 }
 
 // setRowDirection sets the row direction (high or low drive)
-func (m *LEDMatrix) setRowDirection(dir DriveDirection) {
+func (m *FlipdotMatrix) setRowDirection(dir DriveDirection) {
 	if dir == DriveHigh {
 		m.rowLow.Low()
 		m.rowHigh.High()
@@ -120,7 +124,7 @@ func (m *LEDMatrix) setRowDirection(dir DriveDirection) {
 }
 
 // setColumnAddress sets the column address pins based on lookup table
-func (m *LEDMatrix) setColumnAddress(col uint8) {
+func (m *FlipdotMatrix) setColumnAddress(col uint8) {
 	addr := m.colLookup[col]
 	for i := range m.colAddr {
 		if (addr & (1 << uint8(i))) != 0 {
@@ -132,7 +136,7 @@ func (m *LEDMatrix) setColumnAddress(col uint8) {
 }
 
 // setColumnDirection sets the column direction (high or low drive)
-func (m *LEDMatrix) setColumnDirection(dir DriveDirection) {
+func (m *FlipdotMatrix) setColumnDirection(dir DriveDirection) {
 	if dir == DriveHigh {
 		m.colHL.Low()
 	} else {
@@ -141,7 +145,7 @@ func (m *LEDMatrix) setColumnDirection(dir DriveDirection) {
 }
 
 // setColumnEnabled enables or disables column drivers
-func (m *LEDMatrix) setColumnEnabled(col int) {
+func (m *FlipdotMatrix) setColumnEnabled(col int) {
 	for i := range m.colSel {
 		m.colSel[i].Low()
 	}
@@ -151,7 +155,7 @@ func (m *LEDMatrix) setColumnEnabled(col int) {
 }
 
 // drivePixel drives a single pixel
-func (m *LEDMatrix) drivePixel(row, col int, dir DriveDirection) {
+func (m *FlipdotMatrix) drivePixel(col, row int, dir DriveDirection) {
 	m.setRowAddress(uint8(row))
 	m.setColumnAddress(uint8(col % COL_DRIVER_COLUMNS))
 
@@ -159,21 +163,34 @@ func (m *LEDMatrix) drivePixel(row, col int, dir DriveDirection) {
 	m.setColumnDirection(!dir)
 
 	m.setColumnEnabled(col / COL_DRIVER_COLUMNS)
-	time.Sleep(time.Microsecond * 190)
+	time.Sleep(time.Microsecond * 200)
 	m.setColumnEnabled(-1) // Disable all columns
 }
 
-// Clear clears the display buffer
-func (m *LEDMatrix) Clear() {
-	for i := range m.bufferActive {
-		for j := range m.bufferActive[i] {
-			m.bufferActive[i][j] = false
+// Refresh refreshes the display, updating changed pixels
+func (m *FlipdotMatrix) Refresh(forceRefresh bool) {
+	for row := 0; row < m.rows; row++ {
+		for col := 0; col < m.cols; col++ {
+			if forceRefresh || m.bufferActive[row][col] != m.bufferShadow[row][col] {
+				dir := DriveHigh
+				if m.bufferActive[row][col] {
+					dir = DriveLow
+				}
+				m.drivePixel(col, row, dir)
+				m.bufferShadow[row][col] = m.bufferActive[row][col]
+				time.Sleep(time.Microsecond * 10)
+			}
 		}
 	}
 }
 
+// Clear clears the display buffer
+func (m *FlipdotMatrix) Clear() {
+	m.Fill(false)
+}
+
 // Fill fills the display buffer with a value
-func (m *LEDMatrix) Fill(value bool) {
+func (m *FlipdotMatrix) Fill(value bool) {
 	for i := range m.bufferActive {
 		for j := range m.bufferActive[i] {
 			m.bufferActive[i][j] = value
@@ -182,34 +199,324 @@ func (m *LEDMatrix) Fill(value bool) {
 }
 
 // SetPixel sets a pixel in the display buffer
-func (m *LEDMatrix) SetPixel(row, col int, value bool) {
+func (m *FlipdotMatrix) SetPixel(col, row int, value bool) {
 	if row >= 0 && row < m.rows && col >= 0 && col < m.cols {
 		m.bufferActive[row][col] = value
 	}
 }
 
-// Refresh refreshes the display, updating changed pixels
-func (m *LEDMatrix) Refresh(forceRefresh bool) {
-	for row := 0; row < m.rows; row++ {
-		for col := 0; col < m.cols; col++ {
-			if forceRefresh || m.bufferActive[row][col] != m.bufferShadow[row][col] {
-				dir := DriveHigh
-				if m.bufferActive[row][col] {
-					dir = DriveLow
-				}
-				m.drivePixel(row, col, dir)
-				m.bufferShadow[row][col] = m.bufferActive[row][col]
-				time.Sleep(time.Microsecond * 10)
-			}
-		}
-	}
+// Invert toggles the state of all pixels in the active buffer
+func (m *FlipdotMatrix) Invert() {
+    for row := 0; row < m.rows; row++ {
+        for col := 0; col < m.cols; col++ {
+            // Toggle each pixel's state in the active buffer
+            m.bufferActive[row][col] = !m.bufferActive[row][col]
+        }
+    }
 }
+
+// ShiftHorizontal shifts the active buffer horizontally
+// Parameters:
+//   steps: Number of steps to shift (positive for right, negative for left)
+//   rotate: If true, wraps pixels around; if false, fills with blank pixels
+func (m *FlipdotMatrix) ShiftHorizontal(steps int, rotate bool) {
+    // No shift needed
+    if steps == 0 {
+        return
+    }
+
+    // Get absolute value and direction
+    abs := steps
+    if abs < 0 {
+        abs = -abs
+    }
+    shiftRight := steps > 0
+
+    // Don't shift more than matrix width
+    if abs > m.cols {
+        if rotate {
+            // For rotation, take modulo to get effective shift
+            abs = abs % m.cols
+            if abs == 0 {
+                return // Full rotation results in original state
+            }
+            if steps < 0 {
+                abs = m.cols - abs // Convert left shift to equivalent right shift
+                shiftRight = true
+            }
+        } else {
+            // For non-rotating shift, capping at matrix width
+            abs = m.cols
+        }
+    }
+
+    // Create a temporary buffer
+    temp := make([][]bool, m.rows)
+    for i := range temp {
+        temp[i] = make([]bool, m.cols)
+        for j := range temp[i] {
+            temp[i][j] = false
+        }
+    }
+
+    // Perform the shift
+    for row := 0; row < m.rows; row++ {
+        for col := 0; col < m.cols; col++ {
+            var newCol int
+            if shiftRight {
+                newCol = col + abs
+                if newCol >= m.cols {
+                    if rotate {
+                        newCol = newCol % m.cols
+                    } else {
+                        continue // Skip if outside bounds
+                    }
+                }
+                temp[row][newCol] = m.bufferActive[row][col]
+            } else {
+                newCol = col - abs
+                if newCol < 0 {
+                    if rotate {
+                        newCol = m.cols + newCol // Wrap around
+                    } else {
+                        continue // Skip if outside bounds
+                    }
+                }
+                temp[row][newCol] = m.bufferActive[row][col]
+            }
+        }
+    }
+
+    // Update the active buffer
+    for row := 0; row < m.rows; row++ {
+        for col := 0; col < m.cols; col++ {
+            m.bufferActive[row][col] = temp[row][col]
+        }
+    }
+}
+
+// ShiftVertical shifts the active buffer vertically
+// Parameters:
+//   steps: Number of steps to shift (positive for down, negative for up)
+//   rotate: If true, wraps pixels around; if false, fills with blank pixels
+func (m *FlipdotMatrix) ShiftVertical(steps int, rotate bool) {
+    // No shift needed
+    if steps == 0 {
+        return
+    }
+
+    // Get absolute value and direction
+    abs := steps
+    if abs < 0 {
+        abs = -abs
+    }
+    shiftDown := steps > 0
+
+    // Don't shift more than matrix height
+    if abs > m.rows {
+        if rotate {
+            // For rotation, take modulo to get effective shift
+            abs = abs % m.rows
+            if abs == 0 {
+                return // Full rotation results in original state
+            }
+            if steps < 0 {
+                abs = m.rows - abs // Convert upward shift to equivalent downward shift
+                shiftDown = true
+            }
+        } else {
+            // For non-rotating shift, capping at matrix height
+            abs = m.rows
+        }
+    }
+
+    // Create a temporary buffer
+    temp := make([][]bool, m.rows)
+    for i := range temp {
+        temp[i] = make([]bool, m.cols)
+        for j := range temp[i] {
+            temp[i][j] = false
+        }
+    }
+
+    // Perform the shift
+    for row := 0; row < m.rows; row++ {
+        for col := 0; col < m.cols; col++ {
+            var newRow int
+            if shiftDown {
+                newRow = row + abs
+                if newRow >= m.rows {
+                    if rotate {
+                        newRow = newRow % m.rows
+                    } else {
+                        continue // Skip if outside bounds
+                    }
+                }
+                temp[newRow][col] = m.bufferActive[row][col]
+            } else {
+                newRow = row - abs
+                if newRow < 0 {
+                    if rotate {
+                        newRow = m.rows + newRow // Wrap around
+                    } else {
+                        continue // Skip if outside bounds
+                    }
+                }
+                temp[newRow][col] = m.bufferActive[row][col]
+            }
+        }
+    }
+
+    // Update the active buffer
+    for row := 0; row < m.rows; row++ {
+        for col := 0; col < m.cols; col++ {
+            m.bufferActive[row][col] = temp[row][col]
+        }
+    }
+}
+
+// DrawHorizontalLine draws a horizontal line starting at (col, row) with given length
+// If the line extends beyond matrix boundaries, it will be clipped
+func (m *FlipdotMatrix) DrawHorizontalLine(col, row, length int, value bool) {
+    // Skip if row is outside the matrix
+    if row < 0 || row >= m.rows {
+        return
+    }
+
+    // Clip col if negative
+    if col < 0 {
+        length += col // Reduce length
+        col = 0       // Start at first column
+    }
+
+    // Return if no length left after clipping
+    if length <= 0 {
+        return
+    }
+
+    // Calculate end point, clipping to matrix width
+    endCol := col + length
+    if endCol > m.cols {
+        endCol = m.cols
+    }
+
+    // Draw the line
+    for col := col; col < endCol; col++ {
+        m.bufferActive[row][col] = value
+    }
+}
+
+// DrawVerticalLine draws a vertical line starting at (col, row) with given length
+// If the line extends beyond matrix boundaries, it will be clipped
+func (m *FlipdotMatrix) DrawVerticalLine(col, row, length int, value bool) {
+    // Skip if column is outside the matrix
+    if col < 0 || col >= m.cols {
+        return
+    }
+
+    // Clip row if negative
+    if row < 0 {
+        length += row // Reduce length
+        row = 0       // Start at first row
+    }
+
+    // Return if no length left after clipping
+    if length <= 0 {
+        return
+    }
+
+    // Calculate end point, clipping to matrix height
+    endRow := row + length
+    if endRow > m.rows {
+        endRow = m.rows
+    }
+
+    // Draw the line
+    for row := row; row < endRow; row++ {
+        m.bufferActive[row][col] = value
+    }
+}
+
+// DrawRectangle draws a rectangle with top-left corner at (col, row) with specified width and height
+// If the rectangle extends beyond matrix boundaries, it will be clipped
+func (m *FlipdotMatrix) DrawRectangle(col, row, width, height int, value bool) {
+    // Draw horizontal lines (top and bottom)
+    m.DrawHorizontalLine(col, row, width, value)
+    m.DrawHorizontalLine(col, row+height-1, width, value)
+
+    // Draw vertical lines (left and right)
+    m.DrawVerticalLine(col, row, height, value)
+    m.DrawVerticalLine(col+width-1, row, height, value)
+}
+
+// DrawSquare draws a square with top-left corner at (col, row) with specified side length
+// This is a convenience function that calls DrawRectangle with equal width and height
+func (m *FlipdotMatrix) DrawSquare(col, row, size int, value bool) {
+    m.DrawRectangle(col, row, size, size, value)
+}
+
+// TODO NOT TESTED!
+// PlaceBuffer places a smaller buffer into the active buffer at a specific position
+// Parameters:
+//   startRow, startCol: Top-left coordinates where to place the buffer
+//   buffer: 2D array of boolean values representing the buffer to place
+//   transparent: If true, only "true" values from the source buffer will be copied
+func (m *FlipdotMatrix) PlaceBuffer(startCol, startRow int, buffer [][]bool, transparent bool) {
+    if buffer == nil || len(buffer) == 0 {
+        return
+    }
+
+    bufferHeight := len(buffer)
+    bufferWidth := len(buffer[0])
+
+    // Determine overlapping region
+    startRowClipped := startRow
+    if startRowClipped < 0 {
+        startRowClipped = 0
+    }
+
+    startColClipped := startCol
+    if startColClipped < 0 {
+        startColClipped = 0
+    }
+
+    endRow := startRow + bufferHeight
+    if endRow > m.rows {
+        endRow = m.rows
+    }
+
+    endCol := startCol + bufferWidth
+    if endCol > m.cols {
+        endCol = m.cols
+    }
+
+    // Copy buffer to active buffer, respecting transparency
+    for row := startRowClipped; row < endRow; row++ {
+        for col := startColClipped; col < endCol; col++ {
+            // Calculate source buffer coordinates
+            srcRow := row - startRow
+            srcCol := col - startCol
+            
+            // Skip if source coordinates are out of bounds
+            if srcRow < 0 || srcRow >= bufferHeight || srcCol < 0 || srcCol >= bufferWidth {
+                continue
+            }
+            
+            // Apply the pixel from the source buffer
+            if !transparent || buffer[srcRow][srcCol] {
+                m.bufferActive[row][col] = buffer[srcRow][srcCol]
+            }
+        }
+    }
+}
+
+
 
 func main() {
 	led := machine.LED
 	led.Configure(machine.PinConfig{Mode: machine.PinOutput})
 
-	display := NewLEDMatrix(ROW_DRIVER_ROWS, COL_DRIVER_COLUMNS)
+	display := NewFlipdotMatrix(ROW_DRIVER_ROWS, COL_DRIVER_COLUMNS)
 
 	// Initial test pattern
 	led.High()
@@ -219,17 +526,40 @@ func main() {
 	display.Refresh(true)
 	time.Sleep(time.Millisecond * 2000)
 
-	// Blink pattern
-	for i := 0; i < 3; i++ {
-		display.Fill(true)
+	for i := 0; i < COL_DRIVER_COLUMNS; i++ {
+		display.SetPixel(i, 0, true)
 		display.Refresh(false)
-		time.Sleep(time.Millisecond * 50)
-
-		display.Fill(false)
-		display.Refresh(false)
-		time.Sleep(time.Millisecond * 50)
+		time.Sleep(time.Millisecond * 200)
 	}
 
+	for i := 0; i < ROW_DRIVER_ROWS; i++ {
+		display.SetPixel(0, i, true)
+		display.Refresh(false)
+		time.Sleep(time.Millisecond * 100)
+	}
+// 	display.Invert()
+	display.ShiftHorizontal(5, false)
+	display.Refresh(false)
+	time.Sleep(time.Millisecond * 4000)
+
+	display.ShiftVertical(5, false)
+	display.Refresh(false)
+	time.Sleep(time.Millisecond * 4000)
+
+	display.DrawHorizontalLine(2, 10, 10, true)
+	display.Refresh(false)
+	time.Sleep(time.Millisecond * 4000)
+
+	display.DrawVerticalLine(0, 3, 8, true)
+	display.Refresh(false)
+	time.Sleep(time.Millisecond * 4000)
+
+	display.DrawRectangle(16, 0, 3, 5, true)
+	display.Refresh(false)
+	time.Sleep(time.Millisecond * 4000)
+
+//     display.Clear()
+// 	display.Refresh(true)
 	led.Low()
 
 	// Main loop

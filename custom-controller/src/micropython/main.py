@@ -1,3 +1,6 @@
+#
+# Based on flipdot-games Rust code from Anton Berneving (https://github.com/antbern/flipdot-games/tree/main/pico-firmware/src/driver.rs)
+#
 from machine import Pin
 import time
 
