@@ -11,12 +11,12 @@
 ## Features
 
 - Golang / Python library to control the mobitec flipdot displays via serial with the original controller (*completed*).
-- Replacement of the control board with an Raspberry Pi Pico / ESP32 to control the display directly (*under development*).
+- Replacement of the control board with an Raspberry Pi Pico (W) to control the display directly (*under development*).
 - Documentation of the original [control board](docs/controller.md) (*completed*).
 
 ## Serial libraries (original controller)
 
-Controlling the flipdot display via the original controller is simple, effective and accessible, because very little additional hardware is required (namely just a RS-485 adapter, like [this one](https://www.berrybase.de/en/usb-rs485-konverter)).  You can find further instructions on how to connect everything [here](docs/controller.md#Connecting-to-the-Board). The Mobitec proprietary protocol is used for communication via the serial interface. Mobitec's own protocol is now used via the serial interface (very detailed [protocol description](https://github.com/Nosen92/maskin-flipdot/blob/main/protocol.md)). Basically, the controller can accept and display *text* in different fonts/sizes, predefined *symbols* and freely designable *bitmaps*. A list of fonts / symbols for our variations of boards can be found in [fonts.md](docs/fonts.md).  
+Controlling the flipdot display via the original controller is simple, effective and accessible, because very little additional hardware is required (namely just a RS-485 adapter, like [this one](https://www.berrybase.de/en/usb-rs485-konverter)).  You can find further instructions on how to connect everything [here](docs/controller.md#Connecting-to-the-Board). Mobitec's own protocol is now used for communication via the serial interface (very detailed [protocol description](https://github.com/Nosen92/maskin-flipdot/blob/main/protocol.md)). Basically, the controller can accept and display *text* in different fonts/sizes, predefined *symbols* and freely designable *bitmaps*. A list of fonts / symbols for our variations of boards can be found in [fonts.md](docs/fonts.md).  
 **Capabilities / Limitations:**  
 The controller is slow. Processing a command and updating the display takes several seconds. Animations can therefore not be displayed (< 1 FPS). However, this limitation has nothing to do with the flipdot display but with the controller.
 
@@ -27,7 +27,7 @@ The controller is slow. Processing a command and updating the display takes seve
 > [!TIP]
 > A complete list of all functions and their example use can be found in [example.py](serial-lib/py/MobiPy/example.py).
 
-The python libary offers the following featrues:
+The python library offers the following features:
 
 - Text with all available fonts / sizes.
 - Symbols
