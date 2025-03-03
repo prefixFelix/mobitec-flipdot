@@ -15,7 +15,7 @@ type DriveDirection bool
 
 const (
 	ROW_DRIVER_ROWS    = 16
-	COL_DRIVER_COLUMNS = 28
+	COL_DRIVER_COLUMNS = 126
 	DriveHigh DriveDirection = true
 	DriveLow  DriveDirection = false
 )
@@ -125,13 +125,18 @@ func NewFlipdotMatrix(cols, rows int) *FlipdotMatrix {
 			machine.GP13,
 		},
 		colHL:  machine.GP14,
-		colSel: []machine.Pin{machine.GP16, machine.GP17},
+		colSel: []machine.Pin{
+            machine.GP16,  // 28 cols matrix
+            machine.GP17,  // 56 cols matrix
+            machine.GP18,  // 84 cols matrix
+            machine.GP19,  // 112 cols matrix
+            machine.GP20,  // 140 cols matrix
+        },
 
 		// Initialize lookup tables
 		rowLookup: []uint8{1, 4, 5, 2, 3, 6, 7, 9, 12, 13, 10, 11, 14, 15, 17, 20},
 		colLookup: []uint8{
-			1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18,
-			19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31,
+			1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 33, 34, 35, 36, 37, 38, 39, 41, 42, 43, 44, 45, 46, 47, 49, 50, 51, 52, 53, 54, 55, 57, 58, 59, 60, 61, 62, 63, 65, 66, 67, 68, 69, 70, 71, 73, 74, 75, 76, 77, 78, 79, 81, 82, 83, 84, 85, 86, 87, 89, 90, 91, 92, 93, 94, 95, 97, 98, 99, 100, 101, 102, 103, 105, 106, 107, 108, 109, 110, 111, 113, 114, 115, 116, 117, 118, 119, 121, 122, 123, 124, 125, 126, 127, 129, 130, 131, 132, 133, 134, 135, 137, 138, 139, 140, 141, 142, 143, 145, 146, 147, 148, 149, 150, 151, 153, 154, 155, 156, 157, 158, 159,
 		},
 		currentFont: nil,
 	}
@@ -225,7 +230,7 @@ func (m *FlipdotMatrix) drivePixel(col, row int, dir DriveDirection) {
 	m.setRowDirection(dir)
 	m.setColumnDirection(!dir)
 
-	m.setColumnEnabled(col / COL_DRIVER_COLUMNS)
+	m.setColumnEnabled(col / 28)
 	time.Sleep(time.Microsecond * 200)
 	m.setColumnEnabled(-1) // Disable all columns
 }
@@ -767,17 +772,30 @@ func main() {
 	display.Clear()
 	display.Refresh(true)
 	time.Sleep(time.Millisecond * 2000)
+    display.SetPixel(0, 0, true)
+    display.SetPixel(1, 0, true)
+	display.SetPixel(125, 0, true)
+	display.SetPixel(120, 0, true)
+	display.Refresh(false)
+
+//     for i := 0; i < COL_DRIVER_COLUMNS; i++ {
+//         led.High()
+// 		display.SetPixel(i, 0, true)
+// 		display.Refresh(false)
+// 		time.Sleep(time.Millisecond * 200)
+//         led.Low()
+// 	}
 
 //     display.SetFont("moon")
 //     display.DrawText(0, 0, "(")
 //     display.Refresh(false)
 //     time.Sleep(time.Millisecond * 5000)
 //     display.Clear()
-    display.SetFont("ww4x7")
-    display.DrawText(18, 0, "+")
-    display.Refresh(false)
-    time.Sleep(time.Millisecond * 5000)
-    display.Clear()
+//     display.SetFont("ww4x7")
+//     display.DrawText(10, 0, "+")
+//     display.Refresh(false)
+//     time.Sleep(time.Millisecond * 5000)
+//     display.Clear()
 //     display.SetFont("dot01")
 //     display.DrawText(0, 0, "Test")
 //     display.Refresh(false)
@@ -840,13 +858,6 @@ func main() {
 //     display.DrawText(0, 0, "Test")
 //     display.Refresh(false)
 //     time.Sleep(time.Millisecond * 5000)
-
-//
-// 	for i := 0; i < COL_DRIVER_COLUMNS; i++ {
-// 		display.SetPixel(i, 0, true)
-// 		display.Refresh(false)
-// 		time.Sleep(time.Millisecond * 200)
-// 	}
 //
 // 	for i := 0; i < ROW_DRIVER_ROWS; i++ {
 // 		display.SetPixel(0, i, true)
