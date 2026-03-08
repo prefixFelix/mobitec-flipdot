@@ -1,4 +1,4 @@
-module github.com/prefixFelix/mobitec-flipdot/src/go/mobitec
+module github.com/prefixFelix/mobitec-flipdot/serial-lib/go/mobitec
 
 go 1.20
 
