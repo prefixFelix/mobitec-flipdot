@@ -2,7 +2,7 @@
 
 > [!NOTE]
 >
-> This table is not quite complete. See the [font.py](todo) file for a more detailed overview.
+> This table is not quite complete. See the [font.py](serial-lib/py/MobiPy/font.py) file for a more detailed overview. It also seems that the fonts / symbols differ depending on the software version of the controller.
 
 | Address | Height    | Spacing ()          |        | Size   | Monospaced          | Note                                        |
 |---------|-----------|---------------------|--------|--------|---------------------|---------------------------------------------|

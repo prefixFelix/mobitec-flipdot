@@ -3,3 +3,7 @@ dev_*
 .idea/
 .venv/
 src/go/mobitec/examples/priv/main.go
+CLAUDE.md
+custom-controller/pcb/related-projects
+custom-controller/pcb/controller
+custom-controller/pcb/docs
