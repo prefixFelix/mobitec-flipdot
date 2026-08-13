@@ -78,6 +78,7 @@ Added later
 | [flipdot-mobitec](https://github.com/anton-christensen/flipdot-mobitec) | Anton Christensen |                 | X                     | Custom controller based on an ESP32                          |
 | [flipdot](https://github.com/openspaceaarhus/flipdot)        | Open Space Aarhus |                 | X                     | Custom controller based on an ATmega + PCB ([Photos / videos](https://www.vagrearg.org/content/dotflipctl), [Additional infos](https://groups.google.com/g/openspaceaarhus/c/YMDPcS3pnHA)) |
 | [flipdot-games](https://github.com/antbern/flipdot-games)    | Anton Berneving   |                 | X                     | Custom controller board based on an Raspberry Pi Pico (Rust) |
+| [flipflapflop](https://github.com/tbs1-bo/flipflapflop) | tbs1-bo |  | X | Custom controller based on an Arduino Nano |
 | [mobitec-rs485](https://github.com/duffrohde/mobitec-rs485)  | duffrohde         | X               |                       | Basic C RS-485 API                                           |
 | [pymobitec-flipdot](https://github.com/bjarnekvae/pymobitec-flipdot) | Bjarne            | X               |                       | Simple Python RS-485 API                                     |
 | [mqtt-flipdot-driver](https://github.com/ChalmersRobotics/mqtt-flipdot-driver) | Chalmers Robotics | X               |                       | Simple Python RS-485 API                                     |
